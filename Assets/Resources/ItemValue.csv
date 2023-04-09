@@ -1,0 +1,38 @@
+ItemName  ,description ,baseValue ,ValueDestroy,ADO(buff),ADO(destory),ADO(more),spins to destroy,turns to destroy,when destroyed(add item),Add sth,every x spin,every x turns,Turns into sth ,after x spins,Possibility
+Hrothgar,Gives 1 badge; Adjacent Hrothgar's wife gives 1 more badge. Adds 1 Sailling when destroyed.,1,0,Hrothgar's wife,,1,1000,1000,Sailling,,1000,1000,,1000,1
+Hrothgar's wife,Gives 1 badge; Adjacent Hrothgar gives 1 more badge. Adds 1 sheep when destroyed.,1,0,Hrothgar,,1,1000,1000,Sheep,,1000,1000,,1000,1
+Warrior,Gives 2 badges; Adjacent Warrior gives 2 more badges to each Warrior. Destroys adjacent Beer(s).,2,0,Warrior,Beer,2,1000,1000,,,1000,1000,,1000,2
+Hall,Gives 2 badges; Adjacent Music or Beer gives 2 more badges.,2,0,Music; Beer,,2,1000,1000,,,1000,1000,,1000,2
+Music,Gives 3 badges. Destroys itself after giving badges 2 times.,3,0,,,0,2,1000,,,1000,1000,,1000,3
+Sheep,Gives 2 badges. Gives 1 Wool every 4 spins.,2,0,,,0,1000,1000,,Wool,4,1000,,1000,2
+Wool,Gives 5 badges. Adjacent Sailling gives 1 more badge.,5,0,Sailling,,1,1000,1000,,,1000,1000,,1000,5
+Beer,Gives 3 badges. Destroys itself after giving badges 3 times.,3,0,,,0,1000,3,,,1000,1000,,1000,3
+Wheat,Gives 2 badges. Gives 1 Beer every 4 spins.,2,1,,,0,1000,1000,,Beer,4,1000,,1000,2
+Seed,Gives 1 badge. Grows into Wheat or Potato after 4 spins.,1,1,,,0,1000,1000,,,1000,1000,Potato or Wheat,4,1
+Potato,Gives 2 badges. ,2,1,,,0,1000,1000,,,1000,1000,,1000,2
+Farmwoman,Gives 4 badges. Gives each adjcent Potato. Sheep or Wheat 1 more badge. ,4,0,Potato;Sheep;Wheat,,1,1000,1000,,,1000,1000,,1000,4
+Farmman,Gives 0 badges. Adjecent Sailling adds 10 badges. Destroy itself after 4 spins. Adds 4 badges when destoryed. ,0,4,Sailling,,10,4,1000,,,1000,1000,,1000,1
+Grendel ,Take away 1 badge. Adds 1 Killing each spin. Adds 20 badges when destroyed,-1,20,,,0,1000,1000,,Killing,1,1000,,1000,0
+Killing,Gives 1 badge. Destroys adjacent Grendal. Grendal's mom. Dragen sleeping or Dragen awake.,-1,4,,,0,1000,1000,,,1000,1000,,1000,0
+Beowulf,Take away 1 badge. Adds 4 badges when destroyed.,1,0,,Grendal;Gendal's mom;dragen sleeping;Dragen awake,0,1000,1000,,,1000,1000,,1000,1
+Sailling,Gives 1 badge. Adds 5 badges every 2 spins.,1,0,,,0,1000,1000,,5 Badge,2,1000,,1000,1
+Gendel's mom,Take away 2 badges. Adds 20 badges when destroyed. Adds Grendel's head when destroyed.,-2,20,,,0,1000,1000,Grendel's head,,1000,1000,,1000,0
+Sword,Gives 1 badge. Destroys adjacent Killing(s).,1,0,,Killing,0,1000,1000,,,1000,1000,,1000,1
+Grendel's head,Gives 3 badges. Destroys itself after 5 spins.,3,0,,,0,5,1000,,,1000,1000,,1000,3
+Better sword,Gives 3 badges. Destroys itself after giving badges 2 times.,3,0,,,0,1000,2,,,1000,1000,,1000,3
+King,Gives 4 badges.,4,0,,,0,1000,1000,,,1000,1000,,1000,4
+Dragen sleeping,Gives 1 badge. Adds dragen awake when destroyed. ,1,0,,,0,1000,1000,Dragen awake,,1000,1000,,1000,1
+Gold cup,Gives 3 badges. Destroys adjacent dragen sleeping. ,3,0,,Dragen sleep,0,1000,1000,,,1000,1000,,1000,3
+Dragen awake,Take away 2 badges. Destroys adjacent Gold cup. Adds 8 badget when destroyed.,-2,8,,Gold cup,0,1000,1000,,,1000,1000,,1000,0
+Wilglaf,Gives 3 badge. Destroy itself after 3 spins.,3,0,,,0,3,1000,,,1000,1000,,1000,3
+Dragen killed,Gives 4 badges. Destroy itself after 3 spins.,4,0,,,0,3,1000,,,1000,1000,,1000,4
+Sailling upgrade,Gives 3 badges. Adds 8 badges every 2 round.,3,0,,,0,1000,1000,,8 Badge,1000,2,,1000,3
+Rabbit,Gives 1 badge. Adds 1 Rabbit hole every 4 spins.,1,1,,,0,1000,1000,,Rabbit hole,1000,4,,1000,1
+Soil,Gives 1 badge. Destroys adjacent Coin(s). adds Coin in dust.,1,0,,Coin,0,1000,1000,,Coin in dust,1000,1000,,1000,1
+Rabbit hole,Gives 2 badges. Adds 1 Coin every 4 spins.,2,0,,,0,1000,1000,,Coin,4,1000,,1000,2
+Kid ,Gives 2 badges.,2,0,,,0,1000,1000,,,1000,1000,,1000,2
+Coin,Gives 5 badges. ,5,0,,,0,1000,1000,,,1000,1000,,1000,5
+House,Gives 3 badges. Adjacent Study gives 2 badges.,3,0,,Study,2,1000,1000,,,1000,1000,,1000,3
+Study,Gives 4 badges. Adjacent Kid gives 2 badges.,4,0,,Kid,2,1000,1000,,,1000,1000,,1000,4
+Coin in dust,Gives 1 badge. Adjacent Kid gives 6 badges. ,1,0,,Kid,6,1000,1000,,,1000,1000,,1000,1
+Empty,None,0,0,,,0,1000,1000,,,1000,1000,,1000,0

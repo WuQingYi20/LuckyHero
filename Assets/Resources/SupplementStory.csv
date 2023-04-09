@@ -1,0 +1,6 @@
+ItemName,description
+Music,Gives 3 badges. Destroys itself after giving badges 3 times. ( Add Grendel 1 when 3 Music is adjacent for the first time; Add Grendel 2 when 3 Music is adjacent for the second time; Add Grendel 3 when 3 Music is adjacent for the third time.
+Underwater lair,The place where Grendel's mother lives. Transform adjacent Beowulf into Beowulf with the sword. Has a 50% of chance destroying an adjacent agricultural symbol when Grendel's mother appears.
+Beowulf,Gives 5 badges. Fights adjacent Grendel. 
+Beowulf with the sword,Fights adjacent Underwater lair when Grendel's mother appears. 
+Dragon awake,Destroys an adjacent agricultural symbol. Attacks adjacent Old King Beowulf

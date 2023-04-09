@@ -1,0 +1,14 @@
+1.commit:
+git add .
+git commit -m "Message"
+
+2.push:
+git push origin master
+git lfs push --all origin master
+
+3.pull:
+git fetch origin
+git checkout branch-name
+git merge origin/branch-name
+git pull origin branch-name
+git lfs pull
