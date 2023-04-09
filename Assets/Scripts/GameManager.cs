@@ -86,7 +86,7 @@ public class GameManager : MonoBehaviour
         int sumPossibility = 0;
         foreach(var symbol in CSVLoad.symbols)
         {
-            sumPossibility += symbol.possibility; 
+            sumPossibility += symbol.percentage; 
         }
         return sumPossibility;
     }
@@ -96,7 +96,7 @@ public class GameManager : MonoBehaviour
         int randValue = Random.Range(0, sumPossibility);
         foreach(var symbol in CSVLoad.symbols)
         {
-            randValue -= symbol.possibility;
+            randValue -= symbol.percentage;
             if(randValue <= 0)
             {
                 return symbol.itemName;

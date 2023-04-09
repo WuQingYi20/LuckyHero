@@ -119,7 +119,6 @@ public class SlotMachine : MonoBehaviour
 
     private void RemoveSymbolinHand(int x, int y)
     {
-        //��������ȥ���������
         foreach(var symbol in symbolsListInHand)
         {
             if (symbol.points[0] == x && symbol.points[1] == y)
@@ -234,7 +233,6 @@ public class SlotMachine : MonoBehaviour
             }
         }
 
-        //�����ĸ�����Ƴ���
         for (int i = 0; i < 5; i++)
         {
             int indexRand = GetRandSymbolIndexfromHand();
@@ -282,33 +280,26 @@ public class SlotMachine : MonoBehaviour
 
     private List<Point> GetNeighborPoints(int row, int colum)
     {
-        //Debug.Log("Slots.name: "+ slots[row, colum].itemName);
-        //Debug.Log("row: " + row + "colum: " + colum);
         List<Point> points = new List<Point>();
         if(row + 1 < 4)
         {
             points.Add(new Point(row+1, colum));
-            //Debug.Log("1: " + (row + 1));
         }
         if (row - 1 >= 0)
         {
             points.Add(new Point(row - 1, colum));
-            //Debug.Log("2: " + (row - 1));
         }
         if (colum + 1 < 5)
         {
             points.Add(new Point(row, colum + 1));
-            //Debug.Log("3: " + (colum + 1));
         }
         if (colum - 1 >= 0)
         {
             points.Add(new Point(row, colum - 1));
-            //Debug.Log("4: " + (colum - 1));
         }
         return points;
     }
 
-    //hide?
     private void ShowItemBadge(int imageX, int imageY)
     {
         images[imageX, imageY].GetComponentInChildren<TextMeshProUGUI>(true).gameObject.SetActive(true);
@@ -324,10 +315,6 @@ public class SlotMachine : MonoBehaviour
         }
     }
 
-
-    
-
-
     //������effect,�������¼���value�����һ��extra��Ǯ
     private int Detect()
     {
@@ -337,89 +324,77 @@ public class SlotMachine : MonoBehaviour
             for(int j = 0; j < 5; j++)
             {
                 List<Point> pointsNeighbours = GetNeighborPoints(i, j);
-                foreach(Point point in pointsNeighbours)
-                {
-                    //ADO buff
-                    foreach (var ADODBuffObjectName in slots[i, j].ADOBuffObject)
-                    {
-                        if (ADODBuffObjectName == slots[point.x, point.y].itemName)
-                        {
-                            slots[point.x, point.y].caculatedValue += slots[i, j].ADOBuffValue;
-
-                            detectSequence.Append(images[point.x, point.y].transform.DOSpiral(1f, Vector3.up,
-                                    SpiralMode.ExpandThenContract, 1, 10, 1, true).OnComplete(() =>
-                                    {
-
-                                    }
-                                
-                                ));
-                            detectSequence.Join(images[i, j].transform.DOSpiral(1f, Vector3.forward,
-                                    SpiralMode.ExpandThenContract, 1, 10, 10).OnComplete(() =>
-                                    {
-
-                                    }
-
-                                ));
+                foreach(var ADODestroyObject in slots[i,j].ADODestroyObjects){
+                    foreach(Point point in pointsNeighbours){
+                        if (ADODestroyObject == slots[point.x, point.y].itemName){
+                            slots[point.x, point.y].markedDestruction = true;
+                            //add animation and sound
                         }
                     }
+                }
 
-                   //ADO destroy
-                    foreach (var ADODestroyObjectName in slots[i, j].ADODestroyObject)
-                    {
-                        if (ADODestroyObjectName == slots[point.x, point.y].itemName)
+                if(slots[i,j].transformItemChance != 0){
+                    if(slots[i,j].transformItemAdjacent == null){
+                        int roll = Random.Range(1, 101);
+                        if(roll < slots[i,j].transformItemChance * slots[i, j].transformItems.Count)
                         {
-                            slots[point.x, point.y].markedDestruction = true;
-                            //Ҫ������Ǯ��ʲôʱ�����ٶ��������
-                            //��һ�ֶ���
-                            detectSequence.Append(images[point.x, point.y].transform.DOSpiral(1f, Vector3.up,
-                                    SpiralMode.ExpandThenContract, 1, 10, 1, true).OnComplete(() =>
-                                    {
-                                        slots[point.x, point.y] = null;
-                                        symbolsListPlayerTotal.Remove(slots[point.x, point.y]);
-                                    }
+                            //remove original card and add new transform card: slots, hand and intotal
+                            var itemID = roll / slots[i, j].transformItemChance;
+                            TransformSymbol(i, j, slots[i, j].transformItems[itemID]);
+                            //effect
+                        }
+                    }
+                    else{
+                        foreach(Point point in pointsNeighbours){
+                            if(slots[i,j].transformItemAdjacent == slots[point.x, point.y].itemName){
+                                int roll = Random.Range(1, 101);
+                                if (roll < slots[i, j].transformItemChance * slots[i, j].transformItems.Count)
+                                {
+                                    //remove original card and add new transform card: slots, hand and intotal
+                                    var itemID = roll / slots[i, j].transformItemChance;
+                                    TransformSymbol(i, j, slots[i, j].transformItems[itemID]);
+                                    //effect
+                                }
+                            }
+                        }
+                    }
+                }
 
-                                ));
-                            detectSequence.Join(images[i, j].transform.DOSpiral(1f, Vector3.forward,
-                                    SpiralMode.ExpandThenContract, 1, 10, 10).OnComplete(() =>
-                                    {
+                if(slots[i,j].destroyAgricultureChance != 0){
+                    foreach(Point point in pointsNeighbours){
+                        if(slots[point.x, point.y].cardType.Equals("Agricultural")){
+                            symbolsListInHand.Remove(slots[point.x, point.y]);
+                            symbolsListPlayerTotal.Remove(slots[point.x, point.y]);
+                            slots[i, j] = CSVLoad.symbolsDict["empty"];
+                            //effect
+                        }
+                    }
+                }
 
-                                    }
-
-                                ));
+                if (slots[i, j].addItembyAdjacent != null)
+                {
+                    foreach (Point point in pointsNeighbours)
+                    {
+                        if (slots[i, j].addItembyAdjacent == slots[point.x, point.y].itemName)
+                        {
+                            //add addItembyAdjacent to hand and intotal
+                            symbolsListInHand.Add(CSVLoad.symbolsDict[slots[i, j].addItembyAdjacent]);
+                            symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[slots[i, j].addItembyAdjacent]);
+                            //effect
                         }
                     }
                 }
 
                 //after x spins,self destroy
-                if (slots[i, j].spinToDestroy == 1)
+                if (slots[i, j].effectCountDestroy == 1)
                 {
                     slots[i,j] = null;
+                    symbolsListInHand.Remove(slots[i, j]);
                     symbolsListPlayerTotal.Remove(slots[i, j]);
                 }
                 else
                 {
                     slots[i, j].effectCountDestroy--;
-                }
-                //after x spins,add something
-                if (slots[i,j].spinsToAddSTH == 1)
-                {
-                    symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[slots[i, j].objectAddEveryXTurnsORSpins]);
-                }
-                else
-                {
-                    slots[i, j].effectCountDestroy--;
-                }
-
-                //after x spins, turn into sth
-                if (slots[i, j].turnsToAddSTH == 1)
-                {
-                    symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[slots[i, j].objectTurnInto]);
-                    slots[i, j] = null;
-                    symbolsListPlayerTotal.Remove(slots[i, j]);
-                }
-                else
-                {
-                    slots[i, j].turnsToAddSTH--;
                 }
             }
         }
@@ -433,9 +408,19 @@ public class SlotMachine : MonoBehaviour
         return extraBadge;
     }
 
+    private void TransformSymbol(int i, int j, string newSymbolName)
+    {
+        //remove original card and add new transform card: slots, hand and intotal
+        Symbol oldSymbol = slots[i, j];
+        symbolsListInHand.Remove(oldSymbol);
+        symbolsListPlayerTotal.Remove(oldSymbol);
 
+        Symbol newSymbol = CSVLoad.symbolsDict[newSymbolName];
+        slots[i, j] = newSymbol;
+        symbolsListInHand.Add(newSymbol);
+        symbolsListPlayerTotal.Add(newSymbol);
+    }
 
-    //��Ǯ����͸���UI
     private void CaculateMoney()
     {
         int earnedBadge = 0;
