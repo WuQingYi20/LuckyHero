@@ -4,11 +4,11 @@ using UnityEngine;
 public class Symbol : MonoBehaviour
 {
     public Sprite sprite;
-    public string itemName, description, cardType, objectAddWhenDestroyed, objectAddEveryXTurnsORSpins, objectTurnInto, addItembyChance, transformItem, transformItemAdjacent, addItemAdjacentCondition, addItembyAdjacent;
-    public int baseValue, valueDestroy, caculatedValue, ADOBuffValue, spinToDestroy, effectCountDestroy, turnsToAddSTH, spinsToAddSTH, turnsToTurnInto, percentage, ID, addItemChance, transformItemCance, destroyAgricultureChance, price;
+    public string itemName, description, cardType, objectAddWhenDestroyed, objectAddEveryXTurnsORSpins, objectTurnInto, addItembyChance, transformItemAdjacent, addItemAdjacentCondition, addItembyAdjacent;
+    public int baseValue, valueDestroy, caculatedValue, ADOBuffValue, spinToDestroy, effectCountDestroy, turnsToAddSTH, spinsToAddSTH, turnsToTurnInto, percentage, ID, addItemChance, transformItemChance, destroyAgricultureChance, price;
     public bool markedDestruction = false;
     public int[] points = new int[2] { -1, -1 };
-    public List<string> ADOBuffObject = new List<string>(), ADODestroyObject = new List<string>();
+    public List<string> ADOBuffObjects = new List<string>(), ADODestroyObjects = new List<string>(), transformItems = new List<string>();
 
     public Symbol() {}
 
@@ -34,16 +34,16 @@ public class Symbol : MonoBehaviour
         ID = symbol.ID;
         addItemChance = symbol.addItemChance;
         addItembyChance = symbol.addItembyChance;
-        transformItemCance = symbol.transformItemCance;
-        transformItem = symbol.transformItem;
+        transformItemChance = symbol.transformItemChance;
         transformItemAdjacent = symbol.transformItemAdjacent;
         destroyAgricultureChance = symbol.destroyAgricultureChance;
         addItemAdjacentCondition = symbol.addItemAdjacentCondition;
         addItembyAdjacent = symbol.addItembyAdjacent;
         price = symbol.price;
         points = new int[2] { -1, -1 };
-        ADOBuffObject = new List<string>(symbol.ADOBuffObject);
-        ADODestroyObject = new List<string>(symbol.ADODestroyObject);
+        transformItems = new List<string>(symbol.transformItems);
+        ADOBuffObjects = new List<string>(symbol.ADOBuffObjects);
+        ADODestroyObjects = new List<string>(symbol.ADODestroyObjects);
     }
 }
 
