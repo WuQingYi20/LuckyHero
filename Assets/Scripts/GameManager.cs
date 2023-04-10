@@ -9,6 +9,7 @@ using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
     public GameObject winPage;
     public GameObject uploadPage;
     public GameObject failPage;
@@ -23,6 +24,14 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         currentCountstoUploadMoney = countstoUploadBadge;
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void Update()
@@ -55,16 +64,16 @@ public class GameManager : MonoBehaviour
         else
         {
             collectPage.SetActive(true);
-            //ÐèÒªÉú³ÉµÄ¿¨ÅÆ
+            //ï¿½ï¿½Òªï¿½ï¿½ï¿½ÉµÄ¿ï¿½ï¿½ï¿½
 
-            //»ñÈ¡Èý¸öbtnµÄÒýÓÃ²¢ÇÒ¸øËûÃÇËæ»úÖµ
+            //ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½btnï¿½ï¿½ï¿½ï¿½ï¿½Ã²ï¿½ï¿½Ò¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
             int sumPossibility = CalculateTotalPossibility();
             List<string> itemNameList = new List<string>();
             var btnList = collectPage.GetComponentsInChildren<Button>();
             for (int i =0; i < 3; i++)
             {
                 itemNameList.Add(GenerateRandomCardFromDatabase(sumPossibility));
-                //¸øbtnµÄÊôÐÔ¸³Öµ£ºsymbolname, baseValue, description and image
+                //ï¿½ï¿½btnï¿½ï¿½ï¿½ï¿½ï¿½Ô¸ï¿½Öµï¿½ï¿½symbolname, baseValue, description and image
                 var textListInBtn = btnList[i].GetComponentsInChildren<TextMeshProUGUI>();
                 textListInBtn[0].text = itemNameList[i]; //name
                 textListInBtn[1].text = CSVLoad.symbolsDict[itemNameList[i]].baseValue + " badge";
@@ -138,3 +147,4 @@ public class GameManager : MonoBehaviour
         }
     }
 }
+

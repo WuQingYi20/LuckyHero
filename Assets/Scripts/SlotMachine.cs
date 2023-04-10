@@ -84,10 +84,13 @@ public class SlotMachine : MonoBehaviour
 
     private void SlotMachineInitialize()
     {
-        AddSymbolstoPlayerCount("Hrothgar", 9);
-        AddSymbolstoPlayerCount("Hrothgar's wife", 8);
-        AddSymbolstoPlayerCount("Dragen sleeping", 1);
-        AddSymbolstoPlayerCount("Killing", 1);
+        //AddSymbolstoPlayerCount("The mead hall", 1);
+        //AddSymbolstoPlayerCount("Hrothgar", 1);
+        //AddSymbolstoPlayerCount("Hrothgar's wife", 1);
+        //AddSymbolstoPlayerCount("Seedling", 3);
+        AddSymbolstoPlayerCount("Honey", 6);
+        AddSymbolstoPlayerCount("Wheat", 6);
+
     }
 
     private int DebugGetSymbolNameCountInList(string name, List<Symbol> symbolList)
@@ -169,7 +172,6 @@ public class SlotMachine : MonoBehaviour
                 AddSymboltoSlotFromHand(i, j, symbolIndex);
             }
         }
-        //Debug.Log("breakPoint");
     }
 
     private void LoadSpritebySymbolName(int rowTotal)
@@ -178,7 +180,6 @@ public class SlotMachine : MonoBehaviour
         {
             for(int j = 0; j < 5; j++)
             {
-
                 images[i, j].sprite = Resources.Load<Sprite>(slots[i,j].itemName);
             }
         }
@@ -217,9 +218,6 @@ public class SlotMachine : MonoBehaviour
     {
         ResetSymbolsinHand();
         randPoitionSymbol();
-        //exchange hand's symbol and slot's symbol
-        //��������ߣ��м�������ƶ����������������Ƴ���
-        //�ѵ�4������
         for (int i = 0; i < 5; i++)
         {
             AddSymboltoHandfromSlot(3, i);
@@ -251,7 +249,6 @@ public class SlotMachine : MonoBehaviour
         if(count <= 0)
         {
             StartCoroutine(CaculateMoneywithDelay());
-            //����
         }
     }
 
@@ -328,6 +325,10 @@ public class SlotMachine : MonoBehaviour
                     foreach(Point point in pointsNeighbours){
                         if (ADODestroyObject == slots[point.x, point.y].itemName){
                             slots[point.x, point.y].markedDestruction = true;
+                            Debug.Log("This item has been destroyed: "+ slots[point.x, point.y].itemName);
+                            symbolsListInHand.Remove(slots[point.x, point.y]);
+                            symbolsListPlayerTotal.Remove(slots[point.x, point.y]);
+                            slots[point.x, point.y] = CSVLoad.symbolsDict["Empty"];
                             //add animation and sound
                         }
                     }
@@ -398,6 +399,10 @@ public class SlotMachine : MonoBehaviour
                 }
             }
         }
+
+        //整体的检测
+        
+
         for (int i = 0; i< 4; i++)
         {
             for(int j = 0; j<5; j++)
@@ -435,8 +440,11 @@ public class SlotMachine : MonoBehaviour
 
         currentBadge += earnedBadge;
         badgetUI.text = "badge: " + currentBadge;
+        Debug.Log("Update UI");
+        //There's a bug when running it at second time
         detectSequence.Play().OnComplete(() =>
         {
+            Debug.Log("complete animation");
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 4; j++)
@@ -444,6 +452,7 @@ public class SlotMachine : MonoBehaviour
                     slots[i, j].caculatedValue = slots[i, j].baseValue;
                 }
             }
+            Debug.Log("Start activating panel");
             StartCoroutine(SetPanelActivewithDelay(1f));
         });
     }
@@ -465,14 +474,11 @@ public class SlotMachine : MonoBehaviour
     }
 
     //reset value and symbols
-    //���Ƴ�ȡ
     public void ClickNewSymbol(string tag)
     {
-        //�ѿ��Ƽ��뵽hand�У���ô��ȡ���ֺͶ��󣬿��Ƶ����ɣ�������UI�ϵ�����
         GameObject btn = GameObject.FindGameObjectWithTag(tag);
         var textName = btn.GetComponentInChildren<TextMeshProUGUI>();
         AddSymboltoPlayer(textName.text);
-        //����������
         //HideAllItemBadge();
         AddSymbolPanel.SetActive(false);
     }

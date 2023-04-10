@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class Symbol : MonoBehaviour
+public class Symbol : MonoBehaviour, IEquatable<Symbol>
 {
+    private static int sequence = 0;
     public Sprite sprite;
     public string itemName, description, cardType, objectAddWhenDestroyed, objectAddEveryXTurnsORSpins, objectTurnInto, addItembyChance, transformItemAdjacent, addItemAdjacentCondition, addItembyAdjacent;
     public int baseValue, valueDestroy, caculatedValue, ADOBuffValue, spinToDestroy, effectCountDestroy, turnsToAddSTH, spinsToAddSTH, turnsToTurnInto, percentage, ID, addItemChance, transformItemChance, destroyAgricultureChance, price;
@@ -14,6 +17,9 @@ public class Symbol : MonoBehaviour
 
     public Symbol(Symbol symbol)
     {
+        sequence++;
+        ID = sequence;
+        Debug.Log("ID: " + ID);
         sprite = symbol.sprite;
         itemName = symbol.itemName;
         description = symbol.description;
@@ -31,7 +37,6 @@ public class Symbol : MonoBehaviour
         objectTurnInto = symbol.objectTurnInto;
         turnsToTurnInto = symbol.turnsToTurnInto;
         percentage = symbol.percentage;
-        ID = symbol.ID;
         addItemChance = symbol.addItemChance;
         addItembyChance = symbol.addItembyChance;
         transformItemChance = symbol.transformItemChance;
@@ -44,6 +49,11 @@ public class Symbol : MonoBehaviour
         transformItems = new List<string>(symbol.transformItems);
         ADOBuffObjects = new List<string>(symbol.ADOBuffObjects);
         ADODestroyObjects = new List<string>(symbol.ADODestroyObjects);
+    }
+
+    public bool Equals(Symbol other)
+    {
+        return ID == other.ID;
     }
 }
 

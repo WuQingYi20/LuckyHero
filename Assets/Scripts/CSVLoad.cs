@@ -18,7 +18,6 @@ public class CSVLoad : MonoBehaviour
         for (int i = 1; i < splitText.Length - 1; i++)
         {
             string[] row = splitText[i].Split(',');
-            Debug.Log(row[0]);
             Symbol symbolTemp = new Symbol()
             {
                 itemName = row[0],
