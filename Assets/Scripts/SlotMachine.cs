@@ -42,6 +42,7 @@ public class SlotMachine : MonoBehaviour
     List<Symbol> symbolsListPlayerTotal = new List<Symbol>();
 
     private SlotMachineAnimation slotMachineAnimation;
+    private EmotionAnimation emotionAnimation;
     
     public void Swap<T>(IList<T> list, int indexA, int indexB)
     {
@@ -53,6 +54,7 @@ public class SlotMachine : MonoBehaviour
     private void Awake()
     {
         slotMachineAnimation = SlotMachineAnimation.Instance;
+        emotionAnimation = EmotionAnimation.Instance;
         slotMachine = GameObject.FindGameObjectWithTag("SlotMachine");
         Image[] imagesList = slotMachine.GetComponentsInChildren<Image>();
         for(int i = 0; i < 4; i++)
@@ -76,9 +78,6 @@ public class SlotMachine : MonoBehaviour
         ints[0,0] = intList[0];
         ints[0,1] = intList[1];
         intList.RemoveAt(0);
-        Debug.Log(intList[0].x);
-        Debug.Log(ints[0,0].x);
-        Debug.Log(" " + ints[0,1].x);
     }
 
 
@@ -141,7 +140,6 @@ public class SlotMachine : MonoBehaviour
         symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[symbolName]);
     }
 
-    //��һ�������ڰ�symbol�Ż���֮��
     private int GetRandSymbolIndexfromHand()
     {
         //�Ѿ��ڳ��ϵ�symbol���ں���
@@ -166,9 +164,7 @@ public class SlotMachine : MonoBehaviour
         {
             for (int j = 0; j < 5; j++)
             {
-                //Debug.Log("Killing count: "+ DebugGetSymbolNameCountInList("Killing", symbolsListInHand));
                 int symbolIndex = GetRandSymbolIndexfromHand();
-                //also change position(function?)
                 AddSymboltoSlotFromHand(i, j, symbolIndex);
             }
         }
@@ -234,19 +230,19 @@ public class SlotMachine : MonoBehaviour
         for (int i = 0; i < 5; i++)
         {
             int indexRand = GetRandSymbolIndexfromHand();
-            //add
             AddSymboltoSlotFromHand(0, i, indexRand);
         }
-        //have qucikeer way
         LoadSpritebySymbolName(4);
 
         yield return new WaitForSeconds(waitTime/3.5f);
         count--;
         if(count > 0)
         {
-            StartCoroutine(Spin(count * 2, waitTime));
+            float newWaitTime = waitTime * 2;
+            int newCount = count * 2;
+            StartCoroutine(Spin(newCount, newWaitTime));
         }
-        if(count <= 0)
+        else
         {
             StartCoroutine(CaculateMoneywithDelay());
         }
@@ -326,9 +322,15 @@ public class SlotMachine : MonoBehaviour
                         if (ADODestroyObject == slots[point.x, point.y].itemName){
                             slots[point.x, point.y].markedDestruction = true;
                             Debug.Log("This item has been destroyed: "+ slots[point.x, point.y].itemName);
-                            symbolsListInHand.Remove(slots[point.x, point.y]);
-                            symbolsListPlayerTotal.Remove(slots[point.x, point.y]);
-                            slots[point.x, point.y] = CSVLoad.symbolsDict["Empty"];
+                            
+                            //这里可能是逐步的，放在动画结束后
+                            //slotMachineAnimation.PlaySadnessAnimation(images[point.x, point.y]);
+                            emotionAnimation.AnimateExcitement(images[i, j].rectTransform).OnComplete(() =>
+                            {
+                                symbolsListInHand.Remove(slots[point.x, point.y]);
+                                symbolsListPlayerTotal.Remove(slots[point.x, point.y]);
+                                images[point.x, point.y].sprite = Resources.Load<Sprite>("Empty");
+                            });
                             //add animation and sound
                         }
                     }
@@ -441,10 +443,9 @@ public class SlotMachine : MonoBehaviour
         currentBadge += earnedBadge;
         badgetUI.text = "badge: " + currentBadge;
         Debug.Log("Update UI");
-        //There's a bug when running it at second time
-        detectSequence.Play().OnComplete(() =>
-        {
-            Debug.Log("complete animation");
+        emotionAnimation.sequence.Play().OnComplete(() => {
+            emotionAnimation.sequence.Pause();
+            Debug.Log("Start animation emotion");
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 4; j++)

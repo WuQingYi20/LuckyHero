@@ -4,6 +4,12 @@ using UnityEngine.UI;
 
 public class SlotMachineAnimation : MonoBehaviour
 {
+    private Sequence detectSequence;
+    private void Start()
+    {
+        detectSequence = DOTween.Sequence();
+        detectSequence.Pause();
+    }
     private static SlotMachineAnimation instance;
 
     public static SlotMachineAnimation Instance
