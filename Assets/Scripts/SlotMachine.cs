@@ -82,8 +82,9 @@ public class SlotMachine : MonoBehaviour
         //AddSymbolstoPlayerCount("Hrothgar", 1);
         //AddSymbolstoPlayerCount("Hrothgar's wife", 1);
         //AddSymbolstoPlayerCount("Seedling", 3);
-        AddSymbolstoPlayerCount("Honey", 6);
-        AddSymbolstoPlayerCount("Wheat", 6);
+        //AddSymbolstoPlayerCount("Honey", 6);
+        //AddSymbolstoPlayerCount("Wheat", 6);
+        AddSymbolstoPlayerCount("Seedling", 15);
 
     }
 
@@ -280,31 +281,42 @@ public class SlotMachine : MonoBehaviour
                             slots[point.x, point.y].markedDestruction = true;
                             Debug.Log("This item has been destroyed: "+ slots[point.x, point.y].itemName);
                             
-                            //这里可能是逐步的，放在动画结束后
-                            //slotMachineAnimation.PlaySadnessAnimation(images[point.x, point.y]);
-                            emotionAnimation.AnimateExcitement(images[i, j].rectTransform).OnComplete(() =>
+                            emotionAnimation.sequenceCollection.Append(
+                                emotionAnimation.AnimateExcitement(images[i, j].rectTransform).OnComplete(() =>
                             {
                                 symbolsListInHand.Remove(slots[point.x, point.y]);
                                 symbolsListPlayerTotal.Remove(slots[point.x, point.y]);
                                 images[point.x, point.y].sprite = Resources.Load<Sprite>("Empty");
-                            });
+                                //also need to add destroyed value
+                                slots[point.x, point.y].caculatedValue += slots[point.x, point.y].valueDestroy;
+                                //add sth,maybe also animation
+                                symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[slots[point.x, point.y].objectAddWhenDestroyed]);
+                            }));
+                            emotionAnimation.sequenceCollection.Join(
+                                emotionAnimation.AnimateSadness(images[point.x, point.y].rectTransform)
+                                );
                             //add animation and sound
                         }
                     }
                 }
 
                 if(slots[i,j].transformItemChance != 0){
-                    if(slots[i,j].transformItemAdjacent == null){
+                    if(slots[i,j].transformItemAdjacent.Length == 0){
                         int roll = Random.Range(1, 101);
+                        Debug.Log("There's a roll");
                         if(roll < slots[i,j].transformItemChance * slots[i, j].transformItems.Count)
                         {
+                            Debug.Log("Transfrom count: "+ slots[i, j].transformItems.Count);
+                            Debug.Log("Transform 0: "+ slots[i, j].transformItems[0]);
                             //remove original card and add new transform card: slots, hand and intotal
                             var itemID = roll / slots[i, j].transformItemChance;
+                            Debug.Log("TransformedItem: "+ slots[i, j].transformItems[itemID]);
                             TransformSymbol(i, j, slots[i, j].transformItems[itemID]);
                             //effect
                         }
                     }
                     else{
+                        Debug.Log("adjecant case: "+ slots[i, j].transformItemAdjacent);
                         foreach(Point point in pointsNeighbours){
                             if(slots[i,j].transformItemAdjacent == slots[point.x, point.y].itemName){
                                 int roll = Random.Range(1, 101);
@@ -381,6 +393,7 @@ public class SlotMachine : MonoBehaviour
 
         Symbol newSymbol = CSVLoad.symbolsDict[newSymbolName];
         slots[i, j] = newSymbol;
+        images[i, j].sprite = Resources.Load<Sprite>(newSymbolName);
         symbolsListInHand.Add(newSymbol);
         symbolsListPlayerTotal.Add(newSymbol);
     }
@@ -400,10 +413,10 @@ public class SlotMachine : MonoBehaviour
         currentBadge += earnedBadge;
         badgetUI.text = "badge: " + currentBadge;
         Debug.Log("Update UI");
-        emotionAnimation.sequence.Play().OnComplete(() => {
+        emotionAnimation.sequenceCollection.Play().OnComplete(() => {
             Debug.Log("Start animation emotion");
-            emotionAnimation.sequence = DOTween.Sequence();
-            emotionAnimation.sequence.Rewind();
+            emotionAnimation.sequenceCollection = DOTween.Sequence();
+            emotionAnimation.sequenceCollection.Rewind();
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 4; j++)

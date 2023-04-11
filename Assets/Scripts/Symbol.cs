@@ -13,6 +13,7 @@ public class Symbol : MonoBehaviour, IEquatable<Symbol>
     public int[] points = new int[2] { -1, -1 };
     public List<string> ADOBuffObjects = new List<string>(), ADODestroyObjects = new List<string>(), transformItems = new List<string>();
 
+
     public Symbol() {}
 
     public Symbol(Symbol symbol)

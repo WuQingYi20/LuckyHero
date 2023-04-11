@@ -8,7 +8,7 @@ using Sequence = DG.Tweening.Sequence;
 
 public class EmotionAnimation : MonoBehaviour
 {
-    public Sequence sequence;
+    public Sequence sequenceCollection;
 
     public static EmotionAnimation instance;
 
@@ -35,89 +35,89 @@ public class EmotionAnimation : MonoBehaviour
             instance = this;
         }
 
-        sequence = DOTween.Sequence();
-        sequence.Pause();
+        sequenceCollection = DOTween.Sequence();
+        sequenceCollection.Pause();
     }
 
 
     public void StartAnimation()
     {
-        sequence.Play();
+        sequenceCollection.Play();
     }
 
     public void PauseAnimation()
     {
-        sequence.Pause();
+        sequenceCollection.Pause();
     }
 
     public void RestartAnimation()
     {
-        sequence.Restart();
+        sequenceCollection.Restart();
     }
 
-    public Tween AnimateExcitement(RectTransform targetRectTransform)
+    public Sequence AnimateExcitement(RectTransform targetRectTransform)
     {
+        Sequence groupSequence = DOTween.Sequence();
         // Main effect: Quick scale change
-        sequence.Append(targetRectTransform.DOPunchScale(new Vector3(0.2f, -0.2f, 0), 0.4f, 1, 1));
+        groupSequence.Append(targetRectTransform.DOPunchScale(new Vector3(0.2f, -0.2f, 0), 0.4f, 1, 1));
 
         // Side effect: Bounce up and down
-        //sequence.Join(targetRectTransform.DOLocalMoveY(10, 0.4f).SetEase(Ease.OutQuad).SetLoops(2, LoopType.Yoyo));
+        //sequenceCollection.Join(targetRectTransform.DOLocalMoveY(10, 0.4f).SetEase(Ease.OutQuad).SetLoops(2, LoopType.Yoyo));
         Tween tween = targetRectTransform.DOLocalJump(new Vector3(targetRectTransform.localPosition.x, targetRectTransform.localPosition.y, targetRectTransform.localPosition.z), 10, 2, 0.4f, false);
         //Tween tween = targetRectTransform.DOJumpAnchorPos(new Vector2(0, 10), 10, 2, 0.4f, false);
-        sequence.Join(tween);
+        groupSequence.Join(tween);
 
-        sequence.AppendInterval(0.3f);
-        ///sequence.SetLoops(1);
-        return tween;
+        groupSequence.AppendInterval(0.3f);
+        ///sequenceCollection.SetLoops(1);
+        return groupSequence;
     }
 
-    public void AnimateSadness(RectTransform targetRectTransform)
+    public Sequence AnimateSadness(RectTransform targetRectTransform)
     {
+        Sequence groupSequence = DOTween.Sequence();
         // Main effect: Slow up and down movement
-        sequence.Append(targetRectTransform.DOMoveY(targetRectTransform.position.y - 0.05f, 1f).SetEase(Ease.InOutSine));
-        sequence.Append(targetRectTransform.DOMoveY(targetRectTransform.position.y, 1f).SetEase(Ease.InOutSine));
+        groupSequence.Append(targetRectTransform.DOLocalMoveY(targetRectTransform.localPosition.y - 5, 1f).SetEase(Ease.InOutSine).SetLoops(2, LoopType.Yoyo));
 
         // Side effect: Gentle rotation
-        sequence.Join(targetRectTransform.DORotate(new Vector3(0, 0, 2), 1f).SetEase(Ease.InOutSine).SetLoops(2, LoopType.Yoyo));
+        groupSequence.Join(targetRectTransform.DORotate(new Vector3(0, 0, 2), 1f).SetEase(Ease.InOutSine).SetLoops(2, LoopType.Yoyo));
 
-        sequence.AppendInterval(1);
-        sequence.SetLoops(-1);
+        return groupSequence;
     }
 
-    public void AnimateAnger(RectTransform targetRectTransform)
+    public Sequence AnimateAnger(RectTransform targetRectTransform)
     {
+        Sequence groupSequence = DOTween.Sequence();
         // Main effect: Intense shaking
-        sequence.Append(targetRectTransform.DOShakeAnchorPos(0.5f, new Vector2(10, 0), 10, 90, true));
+        sequenceCollection.Append(targetRectTransform.DOShakeAnchorPos(0.5f, new Vector2(10, 0), 10, 90, true));
 
         // Side effect: Slight scale change
-        sequence.Join(targetRectTransform.DOPunchScale(new Vector3(-0.05f, 0.05f, 0), 0.5f, 1, 0));
+        sequenceCollection.Join(targetRectTransform.DOPunchScale(new Vector3(-0.05f, 0.05f, 0), 0.5f, 1, 0));
 
-        sequence.AppendInterval(1);
-        sequence.SetLoops(-1);
+        return groupSequence;
     }
 
-    public void AnimateHappiness(RectTransform targetRectTransform)
+    public Sequence AnimateHappiness(RectTransform targetRectTransform)
     {
-        // Main effect: Bouncing up and down
-        sequence.Append(targetRectTransform.DOJumpAnchorPos(new Vector2(0, 20), 20, 3, 1f, false));
+        Sequence groupSequence = DOTween.Sequence();
+        // Main effect: Bouncing up and down (local jump)
+        sequenceCollection.Append(targetRectTransform.DOLocalJump(new Vector3(targetRectTransform.localPosition.x, targetRectTransform.localPosition.y, targetRectTransform.localPosition.z), 20, 3, 1f, false));
 
         // Side effect: Slight rotation
-        sequence.Join(targetRectTransform.DORotate(new Vector3(0, 0, -5), 0.5f).SetEase(Ease.InOutSine).SetLoops(2, LoopType.Yoyo));
+        sequenceCollection.Join(targetRectTransform.DORotate(new Vector3(0, 0, -5), 0.5f).SetEase(Ease.InOutSine).SetLoops(2, LoopType.Yoyo));
 
-        sequence.AppendInterval(1);
-        sequence.SetLoops(-1);
+        return groupSequence;
     }
 
-    public void AnimateFear(RectTransform targetRectTransform)
+    public Sequence AnimateFear(RectTransform targetRectTransform)
     {
-        // Main effect: Quick scale down and up
-        sequence.Append(targetRectTransform.DOPunchScale(new Vector3(-0.1f, -0.1f, 0), 0.4f, 1, 1));
+        Sequence groupSequence = DOTween.Sequence();
+        // Main effect: Quick scale down and up (punch effect)
+        sequenceCollection.Append(targetRectTransform.DOPunchScale(new Vector3(-0.1f, -0.1f, 0), 0.4f, 1, 1));
 
         // Side effect: Slight horizontal movement
-        sequence.Join(targetRectTransform.DOShakeAnchorPos(0.4f, new Vector2(5, 0), 10, 90, true));
+        sequenceCollection.Join(targetRectTransform.DOShakeAnchorPos(0.4f, new Vector2(5, 0), 10, 90, true));
 
-        sequence.AppendInterval(1);
-        sequence.SetLoops(-1);
+        return groupSequence;
     }
 }
 

@@ -42,7 +42,7 @@ public class CSVLoad : MonoBehaviour
 
                 //transform into sth based on chance and adj. if adj is null, only chance works
                 transformItemChance = int.Parse(row[11]),
-                transformItems = new List<string>(row[5].Split(';')),
+                transformItems = new List<string>(row[12].Split(';')),
                 transformItemAdjacent = row[13],
 
                 //remove agriculture if percentage is not 0 
@@ -59,6 +59,10 @@ public class CSVLoad : MonoBehaviour
                 points = new int[2] { -1, -1 },
                 ID = i
             };
+            if(symbolTemp.transformItems.Count != 0){
+                Debug.Log("first item in destroy: " +symbolTemp.ADODestroyObjects[0]);
+                Debug.Log("first item in transform: " +symbolTemp.transformItems[0]);
+            }
             symbols.Add(symbolTemp);
             symbolsDict.Add(row[0], symbolTemp);
         }
