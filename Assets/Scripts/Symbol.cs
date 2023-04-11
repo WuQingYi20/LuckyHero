@@ -19,7 +19,6 @@ public class Symbol : MonoBehaviour, IEquatable<Symbol>
     {
         sequence++;
         ID = sequence;
-        Debug.Log("ID: " + ID);
         sprite = symbol.sprite;
         itemName = symbol.itemName;
         description = symbol.description;

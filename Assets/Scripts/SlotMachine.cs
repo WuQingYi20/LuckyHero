@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices.WindowsRuntime;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using Sequence = DG.Tweening.Sequence;
 
 class P
 {
@@ -23,9 +25,6 @@ class P
 
 public class SlotMachine : MonoBehaviour
 {
-    //animation
-    private Sequence detectSequence;
-
     public GameObject badgeShowText;
     public static int currentBadge = 0;
     public TextMeshProUGUI badgetUI;
@@ -41,7 +40,6 @@ public class SlotMachine : MonoBehaviour
     List<Symbol> symbolsListInHand = new List<Symbol>();
     List<Symbol> symbolsListPlayerTotal = new List<Symbol>();
 
-    private SlotMachineAnimation slotMachineAnimation;
     private EmotionAnimation emotionAnimation;
     
     public void Swap<T>(IList<T> list, int indexA, int indexB)
@@ -53,7 +51,6 @@ public class SlotMachine : MonoBehaviour
 
     private void Awake()
     {
-        slotMachineAnimation = SlotMachineAnimation.Instance;
         emotionAnimation = EmotionAnimation.Instance;
         slotMachine = GameObject.FindGameObjectWithTag("SlotMachine");
         Image[] imagesList = slotMachine.GetComponentsInChildren<Image>();
@@ -68,8 +65,6 @@ public class SlotMachine : MonoBehaviour
 
     private void Start()
     {
-        detectSequence = DOTween.Sequence();
-        detectSequence.Pause();
         SlotMachineInitialize();
         randPoitionSymbol();
         LoadSpritebySymbolName(4);
@@ -92,19 +87,6 @@ public class SlotMachine : MonoBehaviour
 
     }
 
-    private int DebugGetSymbolNameCountInList(string name, List<Symbol> symbolList)
-    {
-        int count = 0;
-        foreach(Symbol symbol in symbolList)
-        {
-            if(symbol.itemName == name)
-            {
-                count++;
-            }
-        }
-        return count;
-    }
-
     private void AddSymbolstoPlayerCount(string symbolName, int count)
     {
         for (int i = 0; i < count; i++)
@@ -114,19 +96,6 @@ public class SlotMachine : MonoBehaviour
             symbolTemp.ID = idCount++;
             symbolsListPlayerTotal.Add(symbolTemp);
             symbolsListInHand.Add(symbolTemp);
-        }
-    }
-
-    
-
-    private void RemoveSymbolinHand(int x, int y)
-    {
-        foreach(var symbol in symbolsListInHand)
-        {
-            if (symbol.points[0] == x && symbol.points[1] == y)
-            {
-                symbolsListInHand.Remove(symbol);
-            }
         }
     }
 
@@ -142,7 +111,6 @@ public class SlotMachine : MonoBehaviour
 
     private int GetRandSymbolIndexfromHand()
     {
-        //�Ѿ��ڳ��ϵ�symbol���ں���
         int symbolSize = symbolsListInHand.Count;
         //Random.seed = System.DateTime.Now.Second;
         int randomValue = Random.Range(0, symbolSize);
@@ -164,7 +132,9 @@ public class SlotMachine : MonoBehaviour
         {
             for (int j = 0; j < 5; j++)
             {
+                //Debug.Log("Killing count: "+ DebugGetSymbolNameCountInList("Killing", symbolsListInHand));
                 int symbolIndex = GetRandSymbolIndexfromHand();
+                //also change position(function?)
                 AddSymboltoSlotFromHand(i, j, symbolIndex);
             }
         }
@@ -179,18 +149,6 @@ public class SlotMachine : MonoBehaviour
                 images[i, j].sprite = Resources.Load<Sprite>(slots[i,j].itemName);
             }
         }
-    }
-
-    private int SearchSymbolIndexbyPoints(int x, int y)
-    {
-        for(int i=0; i<symbolsListInHand.Count; i++)
-        {
-            if (symbolsListInHand[i].points[0] == x && symbolsListInHand[i].points[1] == y)
-            {
-                return i;
-            }
-        }
-        return - 1;
     }
 
     private void AddSymboltoSlotFromHand(int x, int y, int symbolIndex)
@@ -230,19 +188,19 @@ public class SlotMachine : MonoBehaviour
         for (int i = 0; i < 5; i++)
         {
             int indexRand = GetRandSymbolIndexfromHand();
+            //add
             AddSymboltoSlotFromHand(0, i, indexRand);
         }
+        //have qucikeer way
         LoadSpritebySymbolName(4);
 
         yield return new WaitForSeconds(waitTime/3.5f);
         count--;
         if(count > 0)
         {
-            float newWaitTime = waitTime * 2;
-            int newCount = count * 2;
-            StartCoroutine(Spin(newCount, newWaitTime));
+            StartCoroutine(Spin(count * 2, waitTime));
         }
-        else
+        if(count <= 0)
         {
             StartCoroutine(CaculateMoneywithDelay());
         }
@@ -251,7 +209,7 @@ public class SlotMachine : MonoBehaviour
     IEnumerator CaculateMoneywithDelay()
     {
         yield return new WaitForSeconds(3f);
-        CaculateMoney();//����Detect
+        CaculateMoney();
     }
 
     public void StartCoroutineSpin(float waitTime)
@@ -308,7 +266,6 @@ public class SlotMachine : MonoBehaviour
         }
     }
 
-    //������effect,�������¼���value�����һ��extra��Ǯ
     private int Detect()
     {
         int extraBadge = 0;
@@ -444,8 +401,9 @@ public class SlotMachine : MonoBehaviour
         badgetUI.text = "badge: " + currentBadge;
         Debug.Log("Update UI");
         emotionAnimation.sequence.Play().OnComplete(() => {
-            emotionAnimation.sequence.Pause();
             Debug.Log("Start animation emotion");
+            emotionAnimation.sequence = DOTween.Sequence();
+            emotionAnimation.sequence.Rewind();
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 4; j++)

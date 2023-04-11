@@ -60,7 +60,6 @@ public class EmotionAnimation : MonoBehaviour
         // Main effect: Quick scale change
         sequence.Append(targetRectTransform.DOPunchScale(new Vector3(0.2f, -0.2f, 0), 0.4f, 1, 1));
 
-
         // Side effect: Bounce up and down
         //sequence.Join(targetRectTransform.DOLocalMoveY(10, 0.4f).SetEase(Ease.OutQuad).SetLoops(2, LoopType.Yoyo));
         Tween tween = targetRectTransform.DOLocalJump(new Vector3(targetRectTransform.localPosition.x, targetRectTransform.localPosition.y, targetRectTransform.localPosition.z), 10, 2, 0.4f, false);
