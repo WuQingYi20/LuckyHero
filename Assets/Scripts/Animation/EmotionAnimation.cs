@@ -119,5 +119,43 @@ public class EmotionAnimation : MonoBehaviour
 
         return groupSequence;
     }
+
+    public Sequence AnimateSurprise(RectTransform targetRectTransform)
+    {
+        Sequence groupSequence = DOTween.Sequence();
+        // Main effect: Quick scaling
+        groupSequence.Append(targetRectTransform.DOPunchScale(new Vector3(0.3f, 0.3f, 0), 0.4f, 1, 1));
+
+        // Side effect: Slight vertical movement
+        groupSequence.Join(targetRectTransform.DOShakeAnchorPos(0.4f, new Vector2(0, 5), 10, 90, true));
+
+        return groupSequence;
+    }
+
+    public Sequence AnimateAnticipation(RectTransform targetRectTransform)
+    {
+        Sequence groupSequence = DOTween.Sequence();
+        // Main effect: Slow scaling
+        groupSequence.Append(targetRectTransform.DOScale(new Vector3(1.1f, 1.1f, 1), 0.7f).SetEase(Ease.InOutSine));
+        groupSequence.Append(targetRectTransform.DOScale(new Vector3(1, 1, 1), 0.7f).SetEase(Ease.InOutSine));
+
+        // Side effect: Gentle rotation
+        groupSequence.Join(targetRectTransform.DORotate(new Vector3(0, 0, 3), 0.7f).SetEase(Ease.InOutSine).SetLoops(2, LoopType.Yoyo));
+
+        return groupSequence;
+    }
+
+    public Sequence AnimateConfusion(RectTransform targetRectTransform)
+    {
+        Sequence groupSequence = DOTween.Sequence();
+        // Main effect: Random movement
+        groupSequence.Append(targetRectTransform.DOShakeAnchorPos(0.5f, 5, 10, 90, false, true));
+
+        // Side effect: Random rotation
+        groupSequence.Join(targetRectTransform.DOShakeRotation(0.5f, 5, 10, 90, false));
+
+
+        return groupSequence;
+    }
 }
 

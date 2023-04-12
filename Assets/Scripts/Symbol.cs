@@ -18,6 +18,7 @@ public class Symbol : MonoBehaviour, IEquatable<Symbol>
 
     public Symbol(Symbol symbol)
     {
+        cardType= symbol.cardType;
         sequence++;
         ID = sequence;
         sprite = symbol.sprite;

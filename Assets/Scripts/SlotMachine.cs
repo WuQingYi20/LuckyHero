@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Runtime.InteropServices.WindowsRuntime;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 using UnityEngine.UI;
 using Sequence = DG.Tweening.Sequence;
@@ -82,17 +83,17 @@ public class SlotMachine : MonoBehaviour
         //AddSymbolstoPlayerCount("Hrothgar", 1);
         //AddSymbolstoPlayerCount("Hrothgar's wife", 1);
         //AddSymbolstoPlayerCount("Seedling", 3);
-        //AddSymbolstoPlayerCount("Honey", 6);
-        //AddSymbolstoPlayerCount("Wheat", 6);
-        AddSymbolstoPlayerCount("Seedling", 15);
 
+        //AddSymbolstoPlayerCount("Honey", 6);
+        //AddSymbolstoPlayerCount("Wheat", 10);
+        AddSymbolstoPlayerCount("Seedling", 15);
+        //AddSymbolstoPlayerCount("Music", 20);
     }
 
     private void AddSymbolstoPlayerCount(string symbolName, int count)
     {
         for (int i = 0; i < count; i++)
         {
-            //Debug.Log("ID: " + idCount);
             Symbol symbolTemp = new Symbol(CSVLoad.symbolsDict[symbolName]);
             symbolTemp.ID = idCount++;
             symbolsListPlayerTotal.Add(symbolTemp);
@@ -306,12 +307,20 @@ public class SlotMachine : MonoBehaviour
                         Debug.Log("There's a roll");
                         if(roll < slots[i,j].transformItemChance * slots[i, j].transformItems.Count)
                         {
-                            Debug.Log("Transfrom count: "+ slots[i, j].transformItems.Count);
-                            Debug.Log("Transform 0: "+ slots[i, j].transformItems[0]);
                             //remove original card and add new transform card: slots, hand and intotal
                             var itemID = roll / slots[i, j].transformItemChance;
                             Debug.Log("TransformedItem: "+ slots[i, j].transformItems[itemID]);
-                            TransformSymbol(i, j, slots[i, j].transformItems[itemID]);
+                            var newItem = slots[i, j].transformItems[itemID];
+                            var oldItem = slots[i, j].itemName;
+                            int tempRow = i;
+                            int tempColum = j;
+                            emotionAnimation.sequenceCollection.Append(
+                                                               emotionAnimation.AnimateSurprise(images[i, j].rectTransform).OnComplete(() =>
+                                                               {
+                                                                   Debug.Log("TransformedItem in lambda: " + newItem);
+                                                                   TransformSymbol(tempRow, tempColum, oldItem, newItem);
+                                                                   
+                                                               }));
                             //effect
                         }
                     }
@@ -324,7 +333,17 @@ public class SlotMachine : MonoBehaviour
                                 {
                                     //remove original card and add new transform card: slots, hand and intotal
                                     var itemID = roll / slots[i, j].transformItemChance;
-                                    TransformSymbol(i, j, slots[i, j].transformItems[itemID]);
+                                    var newItem = slots[i, j].transformItems[itemID];
+                                    var oldItem = slots[i, j].itemName;
+                                    int tempRow = i;
+                                    int tempColum = j;
+                                    emotionAnimation.sequenceCollection.Append(
+                                                                       emotionAnimation.AnimateSurprise(images[i, j].rectTransform).OnComplete(() =>
+                                                                       {
+                                                                           Debug.Log("TransformedItem in lambda: " + newItem);
+                                                                           TransformSymbol(tempRow, tempColum, oldItem, newItem);
+
+                                                                       }));
                                     //effect
                                 }
                             }
@@ -334,12 +353,30 @@ public class SlotMachine : MonoBehaviour
 
                 if(slots[i,j].destroyAgricultureChance != 0){
                     foreach(Point point in pointsNeighbours){
+                        Debug.Log("xy: " + slots[point.x, point.y].itemName + " " + slots[point.x, point.y].cardType);
                         if(slots[point.x, point.y].cardType.Equals("Agricultural")){
                             symbolsListInHand.Remove(slots[point.x, point.y]);
                             symbolsListPlayerTotal.Remove(slots[point.x, point.y]);
-                            slots[i, j] = CSVLoad.symbolsDict["empty"];
+                            slots[i, j] = CSVLoad.symbolsDict["Empty"];
                             //effect
                         }
+                    }
+                }
+
+                if (slots[i,j].addItemChance != 0)
+                {
+                    int roll = Random.Range(1, 101);
+                    if (roll <= slots[i, j].addItemChance)
+                    {
+                        var addItem = slots[i, j].addItembyChance;
+                        //sound effect, animation
+                        emotionAnimation.sequenceCollection.Append(
+                            emotionAnimation.AnimateHappiness(images[i, j].rectTransform).OnComplete(() =>
+                        {
+                            symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[addItem]);
+                            symbolsListInHand.Add(CSVLoad.symbolsDict[addItem]);
+                        }));
+                        
                     }
                 }
 
@@ -347,7 +384,7 @@ public class SlotMachine : MonoBehaviour
                 {
                     foreach (Point point in pointsNeighbours)
                     {
-                        if (slots[i, j].addItembyAdjacent == slots[point.x, point.y].itemName)
+                        if (slots[i, j].addItemAdjacentCondition == slots[point.x, point.y].itemName)
                         {
                             //add addItembyAdjacent to hand and intotal
                             symbolsListInHand.Add(CSVLoad.symbolsDict[slots[i, j].addItembyAdjacent]);
@@ -360,19 +397,36 @@ public class SlotMachine : MonoBehaviour
                 //after x spins,self destroy
                 if (slots[i, j].effectCountDestroy == 1)
                 {
-                    slots[i,j] = null;
+                    Debug.Log("Music should be destroyed");
                     symbolsListInHand.Remove(slots[i, j]);
                     symbolsListPlayerTotal.Remove(slots[i, j]);
+                    slots[i, j] = CSVLoad.symbolsDict["Empty"];
                 }
                 else
                 {
+                    //Debug.Log("current effect count: "+ slots[row, colum].effectCountDestroy);
                     slots[i, j].effectCountDestroy--;
                 }
             }
         }
 
-        //整体的检测
-        
+        // Check if there are 3 music symbols in a row or column
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                if (j < 3 && slots[i, j].itemName == "Music" && slots[i, j + 1].itemName == "Music" && slots[i, j + 2].itemName == "Music" ||
+                    i < 2 && slots[i, j].itemName == "Music" && slots[i + 1, j].itemName == "Music" && slots[i + 2, j].itemName == "Music")
+                {
+                    // Add a monster to hand and intotal
+                    var monster = CSVLoad.symbolsDict["Monster1"];
+                    symbolsListInHand.Add(monster);
+                    symbolsListPlayerTotal.Add(monster);
+                    // Effect
+                }
+            }
+        }
+
 
         for (int i = 0; i< 4; i++)
         {
@@ -384,18 +438,18 @@ public class SlotMachine : MonoBehaviour
         return extraBadge;
     }
 
-    private void TransformSymbol(int i, int j, string newSymbolName)
+    private void TransformSymbol(int row, int colum, string oldSymbolName, string newSymbolName)
     {
-        //remove original card and add new transform card: slots, hand and intotal
-        Symbol oldSymbol = slots[i, j];
-        symbolsListInHand.Remove(oldSymbol);
-        symbolsListPlayerTotal.Remove(oldSymbol);
+
+        symbolsListInHand.Remove(CSVLoad.symbolsDict[oldSymbolName]);
+        symbolsListPlayerTotal.Remove(CSVLoad.symbolsDict[oldSymbolName]);
 
         Symbol newSymbol = CSVLoad.symbolsDict[newSymbolName];
-        slots[i, j] = newSymbol;
-        images[i, j].sprite = Resources.Load<Sprite>(newSymbolName);
         symbolsListInHand.Add(newSymbol);
         symbolsListPlayerTotal.Add(newSymbol);
+
+        slots[row, colum] = CSVLoad.symbolsDict[newSymbolName];
+        images[row, colum].sprite = Resources.Load<Sprite>(newSymbolName);
     }
 
     private void CaculateMoney()

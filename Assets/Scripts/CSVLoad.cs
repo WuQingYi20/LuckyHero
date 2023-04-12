@@ -11,8 +11,7 @@ public class CSVLoad : MonoBehaviour
     public static void ReadCSV(string CSVPath)
     {
         TextAsset temp = Resources.Load<TextAsset>(CSVPath);
-        string[] splitText = temp.text.Split('\n');;
-        Debug.Log("splitLength: " + splitText.Length);
+        string[] splitText = temp.text.Split('\n');
 
 
         for (int i = 1; i < splitText.Length - 1; i++)
@@ -59,10 +58,7 @@ public class CSVLoad : MonoBehaviour
                 points = new int[2] { -1, -1 },
                 ID = i
             };
-            if(symbolTemp.transformItems.Count != 0){
-                Debug.Log("first item in destroy: " +symbolTemp.ADODestroyObjects[0]);
-                Debug.Log("first item in transform: " +symbolTemp.transformItems[0]);
-            }
+
             symbols.Add(symbolTemp);
             symbolsDict.Add(row[0], symbolTemp);
         }
