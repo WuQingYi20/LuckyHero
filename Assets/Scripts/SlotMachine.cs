@@ -36,6 +36,7 @@ public class SlotMachine : MonoBehaviour
     private Image[,] images = new Image[4, 5];
     private GameObject slotMachine;
     private int idCount = 0;
+    private int musicCombooCount = 0;
     
     //List<Symbol> symbolsListInPlayer = new List<Symbol>();
     List<Symbol> symbolsListInHand = new List<Symbol>();
@@ -86,8 +87,11 @@ public class SlotMachine : MonoBehaviour
 
         //AddSymbolstoPlayerCount("Honey", 6);
         //AddSymbolstoPlayerCount("Wheat", 10);
-        AddSymbolstoPlayerCount("Seedling", 15);
-        //AddSymbolstoPlayerCount("Music", 20);
+        //AddSymbolstoPlayerCount("Underwater lair", 6);
+        //AddSymbolstoPlayerCount("Seedling", 15);
+        AddSymbolstoPlayerCount("Music", 10);
+        //AddSymbolstoPlayerCount("Hrothgar", 5);
+        //AddSymbolstoPlayerCount("Hrothgar's wife", 5);
     }
 
     private void AddSymbolstoPlayerCount(string symbolName, int count)
@@ -317,15 +321,12 @@ public class SlotMachine : MonoBehaviour
                             emotionAnimation.sequenceCollection.Append(
                                                                emotionAnimation.AnimateSurprise(images[i, j].rectTransform).OnComplete(() =>
                                                                {
-                                                                   Debug.Log("TransformedItem in lambda: " + newItem);
-                                                                   TransformSymbol(tempRow, tempColum, oldItem, newItem);
-                                                                   
+                                                                   TransformSymbol(tempRow, tempColum, oldItem, newItem); 
                                                                }));
                             //effect
                         }
                     }
                     else{
-                        Debug.Log("adjecant case: "+ slots[i, j].transformItemAdjacent);
                         foreach(Point point in pointsNeighbours){
                             if(slots[i,j].transformItemAdjacent == slots[point.x, point.y].itemName){
                                 int roll = Random.Range(1, 101);
@@ -340,7 +341,6 @@ public class SlotMachine : MonoBehaviour
                                     emotionAnimation.sequenceCollection.Append(
                                                                        emotionAnimation.AnimateSurprise(images[i, j].rectTransform).OnComplete(() =>
                                                                        {
-                                                                           Debug.Log("TransformedItem in lambda: " + newItem);
                                                                            TransformSymbol(tempRow, tempColum, oldItem, newItem);
 
                                                                        }));
@@ -355,9 +355,20 @@ public class SlotMachine : MonoBehaviour
                     foreach(Point point in pointsNeighbours){
                         Debug.Log("xy: " + slots[point.x, point.y].itemName + " " + slots[point.x, point.y].cardType);
                         if(slots[point.x, point.y].cardType.Equals("Agricultural")){
-                            symbolsListInHand.Remove(slots[point.x, point.y]);
-                            symbolsListPlayerTotal.Remove(slots[point.x, point.y]);
-                            slots[i, j] = CSVLoad.symbolsDict["Empty"];
+                            emotionAnimation.sequenceCollection.Append(
+                                emotionAnimation.AnimateExcitement(images[i, j].rectTransform).OnComplete(() =>
+                                {
+                                    symbolsListInHand.Remove(slots[point.x, point.y]);
+                                    symbolsListPlayerTotal.Remove(slots[point.x, point.y]);
+                                    images[point.x, point.y].sprite = Resources.Load<Sprite>("Empty");
+                                    //also need to add destroyed value
+                                    slots[point.x, point.y].caculatedValue += slots[point.x, point.y].valueDestroy;
+                                    //add sth,maybe also animation
+                                    symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[slots[point.x, point.y].objectAddWhenDestroyed]);
+                                }));
+                            emotionAnimation.sequenceCollection.Join(
+                                emotionAnimation.AnimateSadness(images[point.x, point.y].rectTransform)
+                                );
                             //effect
                         }
                     }
@@ -387,9 +398,15 @@ public class SlotMachine : MonoBehaviour
                         if (slots[i, j].addItemAdjacentCondition == slots[point.x, point.y].itemName)
                         {
                             //add addItembyAdjacent to hand and intotal
-                            symbolsListInHand.Add(CSVLoad.symbolsDict[slots[i, j].addItembyAdjacent]);
-                            symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[slots[i, j].addItembyAdjacent]);
-                            //effect
+
+                            var addItem = slots[i, j].addItembyAdjacent;
+                            //sound effect, animation
+                            emotionAnimation.sequenceCollection.Append(
+                                emotionAnimation.AnimateHappiness(images[i, j].rectTransform).OnComplete(() =>
+                                {
+                                    symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[addItem]);
+                                    symbolsListInHand.Add(CSVLoad.symbolsDict[addItem]);
+                                }));
                         }
                     }
                 }
@@ -397,10 +414,20 @@ public class SlotMachine : MonoBehaviour
                 //after x spins,self destroy
                 if (slots[i, j].effectCountDestroy == 1)
                 {
-                    Debug.Log("Music should be destroyed");
-                    symbolsListInHand.Remove(slots[i, j]);
-                    symbolsListPlayerTotal.Remove(slots[i, j]);
-                    slots[i, j] = CSVLoad.symbolsDict["Empty"];
+                    var tempRow = i;
+                    var tempColum = j;
+                    emotionAnimation.sequenceCollection.Append(
+                                emotionAnimation.AnimateSadness(images[i, j].rectTransform).OnComplete(() =>
+                                {
+                                    symbolsListInHand.Remove(slots[tempRow, tempColum]);
+                                    symbolsListPlayerTotal.Remove(slots[tempRow, tempColum]);
+                                    images[tempRow, tempColum].sprite = Resources.Load<Sprite>("Empty");
+                                    slots[tempRow, tempColum] = CSVLoad.symbolsDict["Empty"];
+                                    //also need to add destroyed value
+                                    slots[tempRow, tempColum].caculatedValue += slots[tempRow, tempColum].valueDestroy;
+                                    //add sth,maybe also animation
+                                    symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[slots[tempRow, tempColum].objectAddWhenDestroyed]);
+                                }));
                 }
                 else
                 {
@@ -411,21 +438,34 @@ public class SlotMachine : MonoBehaviour
         }
 
         // Check if there are 3 music symbols in a row or column
-        for (int i = 0; i < 4; i++)
+        if(musicCombooCount < 3)
         {
-            for (int j = 0; j < 5; j++)
+            for (int i = 0; i < 4; i++)
             {
-                if (j < 3 && slots[i, j].itemName == "Music" && slots[i, j + 1].itemName == "Music" && slots[i, j + 2].itemName == "Music" ||
-                    i < 2 && slots[i, j].itemName == "Music" && slots[i + 1, j].itemName == "Music" && slots[i + 2, j].itemName == "Music")
+                for (int j = 0; j < 5; j++)
                 {
-                    // Add a monster to hand and intotal
-                    var monster = CSVLoad.symbolsDict["Monster1"];
-                    symbolsListInHand.Add(monster);
-                    symbolsListPlayerTotal.Add(monster);
-                    // Effect
+                    if (j < 3 && slots[i, j].itemName == "Music" && slots[i, j + 1].itemName == "Music" && slots[i, j + 2].itemName == "Music" ||
+                        i < 2 && slots[i, j].itemName == "Music" && slots[i + 1, j].itemName == "Music" && slots[i + 2, j].itemName == "Music")
+                    {
+                        musicCombooCount++;
+                        // Add a monster to hand and intotal
+                        // Convert musicCombooCount to string
+                        var monster = CSVLoad.symbolsDict["Grendel "+ musicCombooCount.ToString()];
+                        var monsterPre = CSVLoad.symbolsDict["Grendel "+ (musicCombooCount - 1).ToString()];
+                        //if musicCombooCount>1, transform; else add
+                        symbolsListInHand.Add(monster);
+                        symbolsListPlayerTotal.Add(monster);
+                        if(musicCombooCount > 1){
+                            symbolsListInHand.Remove(monsterPre);
+                            symbolsListPlayerTotal.Remove(monsterPre);
+                        }
+                        // Effect
+                    }
                 }
             }
         }
+
+        
 
 
         for (int i = 0; i< 4; i++)
