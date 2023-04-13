@@ -36,7 +36,7 @@ public class SlotMachine : MonoBehaviour
     private Image[,] images = new Image[4, 5];
     private GameObject slotMachine;
     private int idCount = 0;
-    private int musicCombooCount = 0;
+    private int musicCombooCount = 1;
     
     //List<Symbol> symbolsListInPlayer = new List<Symbol>();
     List<Symbol> symbolsListInHand = new List<Symbol>();
@@ -89,9 +89,11 @@ public class SlotMachine : MonoBehaviour
         //AddSymbolstoPlayerCount("Wheat", 10);
         //AddSymbolstoPlayerCount("Underwater lair", 6);
         //AddSymbolstoPlayerCount("Seedling", 15);
-        AddSymbolstoPlayerCount("Music", 10);
+        //AddSymbolstoPlayerCount("Music", 10);
         //AddSymbolstoPlayerCount("Hrothgar", 5);
         //AddSymbolstoPlayerCount("Hrothgar's wife", 5);
+        AddSymbolstoPlayerCount("Beowulf", 6);
+        AddSymbolstoPlayerCount("Grendel 3", 6);
     }
 
     private void AddSymbolstoPlayerCount(string symbolName, int count)
@@ -275,10 +277,56 @@ public class SlotMachine : MonoBehaviour
     private int Detect()
     {
         int extraBadge = 0;
-        for(int i = 0; i< 4; i++)
+        // Check if there are 3 music symbols in a row or column
+        if (musicCombooCount <= 3)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 5; j++)
+                {
+                    if (musicCombooCount > 3)
+                    {
+                        break;
+                    }
+                    if (j < 3 && slots[i, j].itemName == "Music" && slots[i, j + 1].itemName == "Music" && slots[i, j + 2].itemName == "Music")
+                    {
+                        Sequence musicSequence = DOTween.Sequence();
+                        musicSequence.Append(emotionAnimation.AnimateHappiness(images[i, j].rectTransform));
+                        musicSequence.Join(emotionAnimation.AnimateHappiness(images[i, j + 1].rectTransform));
+                        musicSequence.Join(emotionAnimation.AnimateHappiness(images[i, j + 2].rectTransform));
+                        emotionAnimation.sequenceCollection.Join(musicSequence.OnComplete(() =>
+                        {
+                            if (musicCombooCount <= 3)
+                            {
+                                ExecuteComboAction(musicCombooCount);
+                                IncrementMusicComboCount();
+                            }
+                        }));
+                    }
+                    else if (i < 2 && slots[i, j].itemName == "Music" && slots[i + 1, j].itemName == "Music" && slots[i + 2, j].itemName == "Music")
+                    {
+                        Sequence musicSequence = DOTween.Sequence();
+                        musicSequence.Append(emotionAnimation.AnimateHappiness(images[i, j].rectTransform));
+                        musicSequence.Join(emotionAnimation.AnimateHappiness(images[i + 1, j].rectTransform));
+                        musicSequence.Join(emotionAnimation.AnimateHappiness(images[i + 2, j].rectTransform));
+                        emotionAnimation.sequenceCollection.Join(musicSequence.OnComplete(() =>
+                        {
+                            if (musicCombooCount <= 3)
+                            {
+                                ExecuteComboAction(musicCombooCount);
+                                IncrementMusicComboCount();
+                            }
+                        }));
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i< 4; i++)
         {
             for(int j = 0; j < 5; j++)
             {
+                //destroy neighboors
                 List<Point> pointsNeighbours = GetNeighborPoints(i, j);
                 foreach(var ADODestroyObject in slots[i,j].ADODestroyObjects){
                     foreach(Point point in pointsNeighbours){
@@ -308,7 +356,6 @@ public class SlotMachine : MonoBehaviour
                 if(slots[i,j].transformItemChance != 0){
                     if(slots[i,j].transformItemAdjacent.Length == 0){
                         int roll = Random.Range(1, 101);
-                        Debug.Log("There's a roll");
                         if(roll < slots[i,j].transformItemChance * slots[i, j].transformItems.Count)
                         {
                             //remove original card and add new transform card: slots, hand and intotal
@@ -437,36 +484,6 @@ public class SlotMachine : MonoBehaviour
             }
         }
 
-        // Check if there are 3 music symbols in a row or column
-        if(musicCombooCount < 3)
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 5; j++)
-                {
-                    if (j < 3 && slots[i, j].itemName == "Music" && slots[i, j + 1].itemName == "Music" && slots[i, j + 2].itemName == "Music" ||
-                        i < 2 && slots[i, j].itemName == "Music" && slots[i + 1, j].itemName == "Music" && slots[i + 2, j].itemName == "Music")
-                    {
-                        musicCombooCount++;
-                        // Add a monster to hand and intotal
-                        // Convert musicCombooCount to string
-                        var monster = CSVLoad.symbolsDict["Grendel "+ musicCombooCount.ToString()];
-                        var monsterPre = CSVLoad.symbolsDict["Grendel "+ (musicCombooCount - 1).ToString()];
-                        //if musicCombooCount>1, transform; else add
-                        symbolsListInHand.Add(monster);
-                        symbolsListPlayerTotal.Add(monster);
-                        if(musicCombooCount > 1){
-                            symbolsListInHand.Remove(monsterPre);
-                            symbolsListPlayerTotal.Remove(monsterPre);
-                        }
-                        // Effect
-                    }
-                }
-            }
-        }
-
-        
-
 
         for (int i = 0; i< 4; i++)
         {
@@ -476,6 +493,31 @@ public class SlotMachine : MonoBehaviour
             }
         }
         return extraBadge;
+    }
+
+    private void ExecuteComboAction(int comboCount)
+    {
+        string symbolName = "Grendel " + comboCount;
+        Debug.Log("添加了巨魔");
+        Debug.Log("添加了巨魔：" + symbolName);
+        if (comboCount == 1)
+        {
+            symbolsListInHand.Add(CSVLoad.symbolsDict[symbolName]);
+            symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[symbolName]);
+        }
+        else
+        {
+            string preSymbolNmae = "Grendel " + (comboCount - 1);
+            symbolsListInHand.Remove(CSVLoad.symbolsDict[preSymbolNmae]);
+            symbolsListPlayerTotal.Remove(CSVLoad.symbolsDict[preSymbolNmae]);
+            symbolsListInHand.Add(CSVLoad.symbolsDict[symbolName]);
+            symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[symbolName]);
+        }
+    }
+
+    private void IncrementMusicComboCount()
+    {
+        musicCombooCount++;
     }
 
     private void TransformSymbol(int row, int colum, string oldSymbolName, string newSymbolName)
