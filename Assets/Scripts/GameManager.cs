@@ -64,9 +64,6 @@ public class GameManager : MonoBehaviour
         else
         {
             collectPage.SetActive(true);
-            //��Ҫ���ɵĿ���
-
-            //��ȡ����btn�����ò��Ҹ��������ֵ
             int sumPossibility = CalculateTotalPossibility();
             List<string> itemNameList = new List<string>();
             var btnList = collectPage.GetComponentsInChildren<Button>();
@@ -79,7 +76,7 @@ public class GameManager : MonoBehaviour
                 textListInBtn[1].text = CSVLoad.symbolsDict[itemNameList[i]].baseValue + " badge";
                 textListInBtn[2].text = CSVLoad.symbolsDict[itemNameList[i]].description;
                 var images = btnList[i].GetComponentsInChildren<Image>();
-                images[1].sprite = Resources.Load<Sprite>(itemNameList[i]);
+                images[2].sprite = Resources.Load<Sprite>(itemNameList[i]);
             }
 
 

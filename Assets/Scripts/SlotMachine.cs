@@ -38,6 +38,7 @@ public class SlotMachine : MonoBehaviour
     private GameObject slotMachine;
     private int idCount = 0;
     private int musicCombooCount = 1;
+    private bool grendelExist = false;
     
     //List<Symbol> symbolsListInPlayer = new List<Symbol>();
     List<Symbol> symbolsListInHand = new List<Symbol>();
@@ -84,16 +85,16 @@ public class SlotMachine : MonoBehaviour
         AddSymbolstoPlayerCount("The mead hall", 1);
         AddSymbolstoPlayerCount("Hrothgar", 1);
         AddSymbolstoPlayerCount("Hrothgar's wife", 1);
-        AddSymbolstoPlayerCount("Seedling", 10);
+        AddSymbolstoPlayerCount("Seedling", 7);
 
         //AddSymbolstoPlayerCount("Honey", 6);
-        //AddSymbolstoPlayerCount("Wheat", 10);
+        //AddSymbolstoPlayerCount("Wheat", 5);
         //AddSymbolstoPlayerCount("Underwater lair", 6);
         //AddSymbolstoPlayerCount("Seedling", 15);
-        //AddSymbolstoPlayerCount("Music", 10);
+        //AddSymbolstoPlayerCount("Music", 8);
         //AddSymbolstoPlayerCount("Hrothgar", 5);
         //AddSymbolstoPlayerCount("Hrothgar's wife", 5);
-        //AddSymbolstoPlayerCount("Beowulf", 5);
+        //AddSymbolstoPlayerCount("Beowulf", 3);
         //AddSymbolstoPlayerCount("Grendel 3", 5);
         //AddSymbolstoPlayerCount("Grendel 2", 5);
         //AddSymbolstoPlayerCount("Grendel 1", 5);
@@ -562,8 +563,13 @@ public class SlotMachine : MonoBehaviour
         Debug.Log("Ìí¼ÓÁË¾ÞÄ§£º" + symbolName);
         if (comboCount == 1)
         {
+            if (grendelExist)
+            {
+                return;
+            }
             symbolsListInHand.Add(CSVLoad.symbolsDict[symbolName]);
             symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[symbolName]);
+            grendelExist = true;
         }
         else
         {
@@ -628,7 +634,7 @@ public class SlotMachine : MonoBehaviour
         }
 
         currentBadge += earnedBadge;
-        badgetUI.text = "badge: " + currentBadge;
+        badgetUI.text = currentBadge.ToString();
         Debug.Log("Update UI");
         emotionAnimation.sequenceCollection.Play().OnComplete(() => {
             Debug.Log("Start animation emotion");
