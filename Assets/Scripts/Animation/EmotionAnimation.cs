@@ -157,5 +157,28 @@ public class EmotionAnimation : MonoBehaviour
 
         return groupSequence;
     }
+
+    public Sequence FlashImage(Image targetImage, Color? flashColor = null, float duration = 0.4f)
+    {
+        // Set default values if no values are provided
+        Color defaultFlashColor = Color.red; // Red color
+
+        // If flashColor is not provided, use the default value
+        Color finalFlashColor = flashColor ?? defaultFlashColor;
+
+        // Store the original color of the image
+        Color originalColor = targetImage.color;
+
+        // Create a sequence for the flash effect
+        Sequence flashSequence = DOTween.Sequence();
+
+        // Change the image's color to the flash color
+        flashSequence.Append(targetImage.DOColor(finalFlashColor, duration * 0.5f));
+
+        // Change the image's color back to the original color
+        flashSequence.Append(targetImage.DOColor(originalColor, duration * 0.5f));
+
+        return flashSequence;
+    }
 }
 

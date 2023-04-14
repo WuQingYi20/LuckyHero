@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Security.Cryptography;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEditorInternal.Profiling.Memory.Experimental;
@@ -80,10 +81,10 @@ public class SlotMachine : MonoBehaviour
 
     private void SlotMachineInitialize()
     {
-        //AddSymbolstoPlayerCount("The mead hall", 1);
-        //AddSymbolstoPlayerCount("Hrothgar", 1);
-        //AddSymbolstoPlayerCount("Hrothgar's wife", 1);
-        //AddSymbolstoPlayerCount("Seedling", 3);
+        AddSymbolstoPlayerCount("The mead hall", 1);
+        AddSymbolstoPlayerCount("Hrothgar", 1);
+        AddSymbolstoPlayerCount("Hrothgar's wife", 1);
+        AddSymbolstoPlayerCount("Seedling", 10);
 
         //AddSymbolstoPlayerCount("Honey", 6);
         //AddSymbolstoPlayerCount("Wheat", 10);
@@ -92,8 +93,10 @@ public class SlotMachine : MonoBehaviour
         //AddSymbolstoPlayerCount("Music", 10);
         //AddSymbolstoPlayerCount("Hrothgar", 5);
         //AddSymbolstoPlayerCount("Hrothgar's wife", 5);
-        AddSymbolstoPlayerCount("Beowulf", 6);
-        AddSymbolstoPlayerCount("Grendel 3", 6);
+        //AddSymbolstoPlayerCount("Beowulf", 5);
+        //AddSymbolstoPlayerCount("Grendel 3", 5);
+        //AddSymbolstoPlayerCount("Grendel 2", 5);
+        //AddSymbolstoPlayerCount("Grendel 1", 5);
     }
 
     private void AddSymbolstoPlayerCount(string symbolName, int count)
@@ -325,15 +328,73 @@ public class SlotMachine : MonoBehaviour
         for (int i = 0; i< 4; i++)
         {
             for(int j = 0; j < 5; j++)
-            {
-                //destroy neighboors
+            {  
                 List<Point> pointsNeighbours = GetNeighborPoints(i, j);
-                foreach(var ADODestroyObject in slots[i,j].ADODestroyObjects){
+                if (slots[i, j].itemName == "Beowulf")
+                {
+                    Debug.Log("its beowulf");
+                    //if neighboor's card's name contains "Grandel", then downgrade it. if it's grandel 3, transform it to grandel 2. if it's grandel 1, destroy it
+                    foreach (Point point in pointsNeighbours)
+                    {
+                        if (slots[point.x, point.y].itemName.Contains("Grendel"))
+                        {
+                            Debug.Log("attack Grendel");
+                            int tempX = point.x;
+                            int tempY = point.y;
+                            int tempRow = i;
+                            int tempColum = j;
+                            if (slots[point.x, point.y].itemName == "Grendel 3")
+                            {
+                                Debug.Log("attack Grendel 32");
+                                //emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[point.x, point.y])).SetAutoKill(false).OnComplete(
+                                //    () =>
+                                //    {
+                                //        Debug.Log("Transform Grendel 3");
+                                //        TransformSymbol(tempX, tempY, "Grendel 3", "Grendel 2");
+                                //    }
+                                //    );
+                                emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).SetAutoKill(false).OnComplete(
+                                    () =>
+                                    {
+                                        Debug.Log("Transform Grendel 3");
+                                        TransformSymbol(tempX, tempY, "Grendel 3", "Grendel 2");
+                                    }
+                                    ));
+                            }
+                            else if (slots[point.x, point.y].itemName == "Grendel 2")
+                            {
+                                Debug.Log("attack Grendel 21");
+
+
+
+                                emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).SetAutoKill(false).OnComplete(
+                                    () =>
+                                    {
+                                        Debug.Log("Transform Grendel 2");
+                                        TransformSymbol(tempX, tempY, "Grendel 2", "Grendel 1");
+                                    }
+                                    ));
+                            }
+                            else if (slots[point.x, point.y].itemName == "Grendel 1")
+                            {
+                                Debug.Log("attack Grendel 10");
+                                emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).SetAutoKill(false).OnComplete(
+                                    () =>
+                                    {
+                                        Debug.Log("Transform Grendel 1");
+                                        DestroySymbol(tempRow, tempColum, tempX, tempY);
+                                    }
+                                    ));
+                            }
+                        }
+                    }
+                }
+
+                //destroy neighboors
+                foreach (var ADODestroyObject in slots[i,j].ADODestroyObjects){
                     foreach(Point point in pointsNeighbours){
                         if (ADODestroyObject == slots[point.x, point.y].itemName){
                             slots[point.x, point.y].markedDestruction = true;
-                            Debug.Log("This item has been destroyed: "+ slots[point.x, point.y].itemName);
-                            
                             emotionAnimation.sequenceCollection.Append(
                                 emotionAnimation.AnimateExcitement(images[i, j].rectTransform).OnComplete(() =>
                             {
@@ -400,7 +461,6 @@ public class SlotMachine : MonoBehaviour
 
                 if(slots[i,j].destroyAgricultureChance != 0){
                     foreach(Point point in pointsNeighbours){
-                        Debug.Log("xy: " + slots[point.x, point.y].itemName + " " + slots[point.x, point.y].cardType);
                         if(slots[point.x, point.y].cardType.Equals("Agricultural")){
                             emotionAnimation.sequenceCollection.Append(
                                 emotionAnimation.AnimateExcitement(images[i, j].rectTransform).OnComplete(() =>
@@ -532,6 +592,27 @@ public class SlotMachine : MonoBehaviour
 
         slots[row, colum] = CSVLoad.symbolsDict[newSymbolName];
         images[row, colum].sprite = Resources.Load<Sprite>(newSymbolName);
+    }
+
+    private void DestroySymbol(int attackerX, int attackerY, int defendX, int defendY)
+    {
+        slots[defendX, defendY].markedDestruction = true;
+        emotionAnimation.sequenceCollection.Append(
+            emotionAnimation.AnimateExcitement(images[attackerX, attackerX].rectTransform).OnComplete(() =>
+            {
+                symbolsListInHand.Remove(slots[defendX, defendY]);
+                symbolsListPlayerTotal.Remove(slots[defendX, defendY]);
+                images[defendX, defendY].sprite = Resources.Load<Sprite>("Empty");
+                //also need to add destroyed value
+                int originalValue = slots[defendX, defendY].baseValue + slots[defendX, defendY].valueDestroy;
+                slots[defendX, defendY].caculatedValue = originalValue;
+                //add sth,maybe also animation
+                symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[slots[defendX, defendY].objectAddWhenDestroyed]);
+            }));
+        emotionAnimation.sequenceCollection.Join(
+            emotionAnimation.AnimateSadness(images[defendX, defendY].rectTransform)
+            );
+        //add sound
     }
 
     private void CaculateMoney()
