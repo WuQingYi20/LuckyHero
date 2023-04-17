@@ -1,5 +1,6 @@
 using DG.Tweening;
 using DG.Tweening.Core.Enums;
+using MoreMountains.Feedbacks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
@@ -43,8 +44,11 @@ public class SlotMachine : MonoBehaviour
     //List<Symbol> symbolsListInPlayer = new List<Symbol>();
     List<Symbol> symbolsListInHand = new List<Symbol>();
     List<Symbol> symbolsListPlayerTotal = new List<Symbol>();
+    public List<Symbol> SymbolsListPlayerTotal => symbolsListPlayerTotal;
 
     private EmotionAnimation emotionAnimation;
+    private LevelTransformData levelTransformData;
+    public Image backgroundImage;
     
     public void Swap<T>(IList<T> list, int indexA, int indexB)
     {
@@ -53,17 +57,41 @@ public class SlotMachine : MonoBehaviour
         list[indexB] = tmp;
     }
 
+    private static SlotMachine instance;
+
+    public static SlotMachine Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<SlotMachine>();
+            }
+            return instance;
+        }
+    }
+
     private void Awake()
     {
         emotionAnimation = EmotionAnimation.Instance;
         slotMachine = GameObject.FindGameObjectWithTag("SlotMachine");
         Image[] imagesList = slotMachine.GetComponentsInChildren<Image>();
-        for(int i = 0; i < 4; i++)
+        levelTransformData = new LevelTransformData();
+        for (int i = 0; i < 4; i++)
         {
             for(int j = 0; j < 5; j++)
             {
                 images[i,j] = imagesList[5*i+j];
             }
+        }
+
+        if (instance != null && instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            instance = this;
         }
     }
 
@@ -85,16 +113,17 @@ public class SlotMachine : MonoBehaviour
         AddSymbolstoPlayerCount("The mead hall", 1);
         AddSymbolstoPlayerCount("Hrothgar", 1);
         AddSymbolstoPlayerCount("Hrothgar's wife", 1);
-        AddSymbolstoPlayerCount("Seedling", 7);
+        //AddSymbolstoPlayerCount("Seedling", 7);
 
         //AddSymbolstoPlayerCount("Honey", 6);
-        //AddSymbolstoPlayerCount("Wheat", 5);
-        //AddSymbolstoPlayerCount("Underwater lair", 6);
+        AddSymbolstoPlayerCount("Wheat", 5);
+        AddSymbolstoPlayerCount("Underwater lair", 1);
         //AddSymbolstoPlayerCount("Seedling", 15);
         //AddSymbolstoPlayerCount("Music", 8);
         //AddSymbolstoPlayerCount("Hrothgar", 5);
         //AddSymbolstoPlayerCount("Hrothgar's wife", 5);
         //AddSymbolstoPlayerCount("Beowulf", 3);
+        AddSymbolstoPlayerCount("Beowulf with the sword", 1);
         //AddSymbolstoPlayerCount("Grendel 3", 5);
         //AddSymbolstoPlayerCount("Grendel 2", 5);
         //AddSymbolstoPlayerCount("Grendel 1", 5);
@@ -294,11 +323,11 @@ public class SlotMachine : MonoBehaviour
                     }
                     if (j < 3 && slots[i, j].itemName == "Music" && slots[i, j + 1].itemName == "Music" && slots[i, j + 2].itemName == "Music")
                     {
-                        Sequence musicSequence = DOTween.Sequence();
-                        musicSequence.Append(emotionAnimation.AnimateHappiness(images[i, j].rectTransform));
-                        musicSequence.Join(emotionAnimation.AnimateHappiness(images[i, j + 1].rectTransform));
-                        musicSequence.Join(emotionAnimation.AnimateHappiness(images[i, j + 2].rectTransform));
-                        emotionAnimation.sequenceCollection.Join(musicSequence.OnComplete(() =>
+                        Sequence musicComboSequence = DOTween.Sequence();
+
+                        musicComboSequence.Append(emotionAnimation.AnimateHappiness(images[i, j].rectTransform));
+                        musicComboSequence.Join(emotionAnimation.AnimateHappiness(images[i, j + 1].rectTransform));
+                        musicComboSequence.Join(emotionAnimation.AnimateHappiness(images[i, j + 2].rectTransform).OnComplete(() =>
                         {
                             if (musicCombooCount <= 3)
                             {
@@ -306,21 +335,24 @@ public class SlotMachine : MonoBehaviour
                                 IncrementMusicComboCount();
                             }
                         }));
+
+                        emotionAnimation.sequenceCollection.Append(musicComboSequence);
+
                     }
                     else if (i < 2 && slots[i, j].itemName == "Music" && slots[i + 1, j].itemName == "Music" && slots[i + 2, j].itemName == "Music")
                     {
-                        Sequence musicSequence = DOTween.Sequence();
-                        musicSequence.Append(emotionAnimation.AnimateHappiness(images[i, j].rectTransform));
-                        musicSequence.Join(emotionAnimation.AnimateHappiness(images[i + 1, j].rectTransform));
-                        musicSequence.Join(emotionAnimation.AnimateHappiness(images[i + 2, j].rectTransform));
-                        emotionAnimation.sequenceCollection.Join(musicSequence.OnComplete(() =>
-                        {
-                            if (musicCombooCount <= 3)
+                        emotionAnimation.sequenceCollection.Append(emotionAnimation.AnimateHappiness(images[i, j].rectTransform));
+                        emotionAnimation.sequenceCollection.Join(emotionAnimation.AnimateHappiness(images[i + 1, j].rectTransform));
+                        emotionAnimation.sequenceCollection.Join(emotionAnimation.AnimateHappiness(images[i + 2, j].rectTransform).OnComplete(
+                            () =>
                             {
-                                ExecuteComboAction(musicCombooCount);
-                                IncrementMusicComboCount();
+                                if (musicCombooCount <= 3)
+                                {
+                                    ExecuteComboAction(musicCombooCount);
+                                    IncrementMusicComboCount();
+                                }
                             }
-                        }));
+                            ));
                     }
                 }
             }
@@ -331,6 +363,7 @@ public class SlotMachine : MonoBehaviour
             for(int j = 0; j < 5; j++)
             {  
                 List<Point> pointsNeighbours = GetNeighborPoints(i, j);
+                //Beowulf fight
                 if (slots[i, j].itemName == "Beowulf")
                 {
                     Debug.Log("its beowulf");
@@ -346,14 +379,6 @@ public class SlotMachine : MonoBehaviour
                             int tempColum = j;
                             if (slots[point.x, point.y].itemName == "Grendel 3")
                             {
-                                Debug.Log("attack Grendel 32");
-                                //emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[point.x, point.y])).SetAutoKill(false).OnComplete(
-                                //    () =>
-                                //    {
-                                //        Debug.Log("Transform Grendel 3");
-                                //        TransformSymbol(tempX, tempY, "Grendel 3", "Grendel 2");
-                                //    }
-                                //    );
                                 emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).SetAutoKill(false).OnComplete(
                                     () =>
                                     {
@@ -364,10 +389,6 @@ public class SlotMachine : MonoBehaviour
                             }
                             else if (slots[point.x, point.y].itemName == "Grendel 2")
                             {
-                                Debug.Log("attack Grendel 21");
-
-
-
                                 emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).SetAutoKill(false).OnComplete(
                                     () =>
                                     {
@@ -378,7 +399,6 @@ public class SlotMachine : MonoBehaviour
                             }
                             else if (slots[point.x, point.y].itemName == "Grendel 1")
                             {
-                                Debug.Log("attack Grendel 10");
                                 emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).SetAutoKill(false).OnComplete(
                                     () =>
                                     {
@@ -415,6 +435,7 @@ public class SlotMachine : MonoBehaviour
                     }
                 }
 
+                //transform item
                 if(slots[i,j].transformItemChance != 0){
                     if(slots[i,j].transformItemAdjacent.Length == 0){
                         int roll = Random.Range(1, 101);
@@ -460,10 +481,33 @@ public class SlotMachine : MonoBehaviour
                     }
                 }
 
+                //if beowulf is not appear, mother appear and has effect
+                if (slots[i, j].itemName == "Underwater lair")
+                {
+                    var beowulfExistFlag = false;
+                    //如果有beowulf就不变身
+                    foreach(var point in pointsNeighbours)
+                    {
+                        if (slots[point.x, point.y].itemName == "Beowulf")
+                        {
+                            beowulfExistFlag = true;
+                        }
+                    }
+                    if (!beowulfExistFlag)
+                    {
+                        Sprite motherSprite = Resources.Load<Sprite>("Grendel's mother");
+                        emotionAnimation.sequenceCollection.Append(emotionAnimation.AnimateHorizontalFlip(images[i, j].rectTransform, motherSprite));
+                    }
+                }
+
+
                 if(slots[i,j].destroyAgricultureChance != 0){
                     foreach(Point point in pointsNeighbours){
                         if(slots[point.x, point.y].cardType.Equals("Agricultural")){
-                            emotionAnimation.sequenceCollection.Append(
+                            int roll = Random.Range(1, 101);
+                            if (roll < slots[i, j].destroyAgricultureChance)
+                            {
+                                emotionAnimation.sequenceCollection.Append(
                                 emotionAnimation.AnimateExcitement(images[i, j].rectTransform).OnComplete(() =>
                                 {
                                     symbolsListInHand.Remove(slots[point.x, point.y]);
@@ -474,10 +518,12 @@ public class SlotMachine : MonoBehaviour
                                     //add sth,maybe also animation
                                     symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[slots[point.x, point.y].objectAddWhenDestroyed]);
                                 }));
-                            emotionAnimation.sequenceCollection.Join(
-                                emotionAnimation.AnimateSadness(images[point.x, point.y].rectTransform)
-                                );
-                            //effect
+                                emotionAnimation.sequenceCollection.Join(
+                                    emotionAnimation.AnimateSadness(images[point.x, point.y].rectTransform)
+                                    );
+                                //effect
+                            }
+
                         }
                     }
                 }
@@ -542,6 +588,35 @@ public class SlotMachine : MonoBehaviour
                     //Debug.Log("current effect count: "+ slots[row, colum].effectCountDestroy);
                     slots[i, j].effectCountDestroy--;
                 }
+
+
+                //beowulf with sword
+                if (slots[i, j].itemName == "Beowulf with the sword")
+                {
+
+                    foreach (var point in GetNeighborPoints(i, j))
+                    {
+                        if (slots[point.x, point.y].itemName.Contains("Underwater lair"))
+                        {
+                            Debug.Log("attack Underwater lair");
+                            int tempX = point.x;
+                            int tempY = point.y;
+                            int tempRow = i;
+                            int tempColum = j;
+                            if (slots[point.x, point.y].itemName == "Underwater lair")
+                            {
+                                emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).SetAutoKill(false).OnComplete(
+                                    () =>
+                                    {
+                                        Debug.Log("Transform Underwater lair");
+                                        DestroySymbol(tempRow, tempColum, tempX, tempY);
+                                        TransformLevel2toLevel3();
+                                    }
+                                    ));
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -554,6 +629,30 @@ public class SlotMachine : MonoBehaviour
             }
         }
         return extraBadge;
+    }
+
+    private void TransformLevel2toLevel3()
+    {
+        //add items, destroy items and change background
+        foreach(var additem in levelTransformData.addItems)
+        {
+            symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[additem]);
+            symbolsListInHand.Add(CSVLoad.symbolsDict[additem]);
+        }
+
+        //destroy
+        foreach (var destroyItem in levelTransformData.destroyItems)
+        {
+            foreach (var iteminTotal in symbolsListPlayerTotal)
+            {
+                if(iteminTotal.itemName == destroyItem)
+                {
+                    symbolsListPlayerTotal.Remove(iteminTotal);
+                }
+            }
+        }
+
+        backgroundImage.sprite = Resources.Load<Sprite>("BackgroundStage2");
     }
 
     private void ExecuteComboAction(int comboCount)

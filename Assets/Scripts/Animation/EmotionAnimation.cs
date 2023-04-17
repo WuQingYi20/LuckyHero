@@ -169,7 +169,7 @@ public class EmotionAnimation : MonoBehaviour
         // Store the original color of the image
         Color originalColor = targetImage.color;
 
-        // Create a sequence for the flash effect
+        // Create a flipSequence for the flash effect
         Sequence flashSequence = DOTween.Sequence();
 
         // Change the image's color to the flash color
@@ -180,5 +180,32 @@ public class EmotionAnimation : MonoBehaviour
 
         return flashSequence;
     }
+
+    public Sequence AnimateHorizontalFlip(RectTransform targetRectTransform, Sprite newSprite)
+    {
+        Sequence flipSequence = DOTween.Sequence();
+
+        // Main effect: Rotate around the Y-axis for a horizontal flip
+        flipSequence.Append(targetRectTransform.DORotate(new Vector3(0, 180, 0), 0.5f).SetEase(Ease.OutCubic));
+
+        flipSequence.AppendCallback(() => targetRectTransform.GetComponent<Image>().sprite = newSprite);
+
+        return flipSequence;
+    }
+
+    public Sequence AnimateVerticalFlip(RectTransform targetRectTransform)
+    {
+        Sequence flipSequence = DOTween.Sequence();
+
+        // Main effect: Rotate around the X-axis for a vertical flip
+        flipSequence.Append(targetRectTransform.DORotate(new Vector3(180, 0, 0), 0.5f).SetEase(Ease.OutCubic));
+
+        // Reset the rotation after a short interval
+        flipSequence.AppendInterval(1);
+        flipSequence.Append(targetRectTransform.DORotate(new Vector3(0, 0, 0), 0.5f).SetEase(Ease.OutCubic));
+
+        return flipSequence;
+    }
+
 }
 
