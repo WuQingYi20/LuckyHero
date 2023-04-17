@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class CardUI : MonoBehaviour
+public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public string cardName;
 
@@ -14,6 +14,7 @@ public class CardUI : MonoBehaviour
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        Debug.Log("mouse hovers card");
         TooltipManager.Instance.ShowTooltip(GetCardDescription(), GetComponent<RectTransform>()); 
     }
 

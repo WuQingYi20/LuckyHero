@@ -7149,7 +7149,7 @@ MonoBehaviour:
   tooltipText: {fileID: 2130525138316122935}
   tooltipRectTransform: {fileID: 2130525138316122934}
   canvas: {fileID: 1835775204}
-  offset: {x: 0, y: 0}
+  offset: {x: -170, y: 200}
 --- !u!1 &1891867568
 GameObject:
   m_ObjectHideFlags: 0
@@ -8893,6 +8893,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1835775205}
     m_Modifications:
+    - target: {fileID: 3771956869159319130, guid: 4a364c9337eb92f4d938f95c128ef584, type: 3}
+      propertyPath: m_fontSize
+      value: 44.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 3771956869159319130, guid: 4a364c9337eb92f4d938f95c128ef584, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7491394865334931101, guid: 4a364c9337eb92f4d938f95c128ef584, type: 3}
       propertyPath: m_Name
       value: ToopTip
@@ -8967,11 +8975,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8799799853604229441, guid: 4a364c9337eb92f4d938f95c128ef584, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -222
       objectReference: {fileID: 0}
     - target: {fileID: 8799799853604229441, guid: 4a364c9337eb92f4d938f95c128ef584, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 125
       objectReference: {fileID: 0}
     - target: {fileID: 8799799853604229441, guid: 4a364c9337eb92f4d938f95c128ef584, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
