@@ -34,7 +34,8 @@ public class SlotMachine : MonoBehaviour
     public static int currentBadge = 0;
     public TextMeshProUGUI badgetUI;
     public GameObject AddSymbolPanel;
-    public GameManager gameManager;
+    private GameManager gameManager;
+    private SoundEffectManager soundEffectManager;
     //magic value4, 5
     private Symbol[,] slots = new Symbol[4, 5];
     private Image[,] images = new Image[4, 5];
@@ -78,7 +79,7 @@ public class SlotMachine : MonoBehaviour
 
     private void Awake()
     {
-        emotionAnimation = EmotionAnimation.Instance;
+        
         slotMachine = GameObject.FindGameObjectWithTag("SlotMachine");
         Image[] imagesList = slotMachine.GetComponentsInChildren<Image>();
         levelTransformData = new LevelTransformData();
@@ -98,10 +99,14 @@ public class SlotMachine : MonoBehaviour
         {
             instance = this;
         }
+        
     }
 
     private void Start()
     {
+        emotionAnimation = EmotionAnimation.Instance;
+        soundEffectManager = SoundEffectManager.Instance;
+        gameManager = GameManager.instance;
         SlotMachineInitialize();
         randPoitionSymbol();
         LoadSpritebySymbolName(4);
@@ -465,7 +470,6 @@ public class SlotMachine : MonoBehaviour
                         {
                             //remove original card and add new transform card: slots, hand and intotal
                             var itemID = roll / slots[i, j].transformItemChance;
-                            Debug.Log("TransformedItem: "+ slots[i, j].transformItems[itemID]);
                             var newItem = slots[i, j].transformItems[itemID];
                             var oldItem = slots[i, j].itemName;
                             int tempRow = i;
@@ -705,6 +709,8 @@ public class SlotMachine : MonoBehaviour
             symbolsListPlayerTotal.Remove(CSVLoad.symbolsDict[preSymbolNmae]);
             symbolsListInHand.Add(CSVLoad.symbolsDict[symbolName]);
             symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[symbolName]);
+            //下一轮抽卡肯定能是Beowulf，通过call GameManager里面的事件
+            gameManager.OnBeowulfExist();
         }
     }
 
@@ -811,14 +817,26 @@ public class SlotMachine : MonoBehaviour
         var textName = btn.GetComponentInChildren<TextMeshProUGUI>();
         AddSymboltoPlayer(textName.text);
         //update badge
+        Debug.Log(textName.text+" price: " + CSVLoad.symbolsDict[textName.text].price);
         UpdateBadge(-CSVLoad.symbolsDict[textName.text].price);
         //HideAllItemBadge();
         AddSymbolPanel.SetActive(false);
     }
 
-    private void UpdateBadge(int badgeOffset)
+    public void SkipBtn()
+    {
+        AddSymbolPanel.SetActive(false);
+    }
+
+    public void UpdateBadge(int badgeOffset)
     {
         currentBadge += badgeOffset;
+        //Debug.Log("current badge:" + currentBadge);
         badgeShowText.text = currentBadge.ToString();
+    }
+
+    private void Update()
+    {
+        //Debug.Log("player badge:"+ currentBadge);
     }
 }
