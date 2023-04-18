@@ -1,30 +1,30 @@
-ItemName,Percentage,price,stage
-Wheat,1,15,1
-Beer,2,12,1
-Potato,3,8,1
-Seedling,3,7,1
-Honey,2,10,1
-Mead,1,17,1
-The mead hall,0,0,999
-Hrothgar,0,0,999
-Hrothgar's wife,0,0,999
-Music,0,0,999
-Grendel 1,0,0,999
-Grendel 2,0,0,999
-Grendel 3,0,0,999
-Underwater lair,0,0,999
-Beowulf,0,0,999
-Beowulf with the sword,0,0,999
-Sheep,1,20,3
-Wool,1,10,3
-Old King Beowulf,0,0,999
-Villager,1,20,1
-Mutton,3,10,3
-Shipping,1,40,3
-Warrior,1,30,3
-Wilglaf,0,0,999
-Dragon sleeping,0,0,999
-Gold Cup,0,0,999
-Dragon awake,0,0,999
-Grendel's arm,0,0,999
-Empty,0,0,999
+ItemName,description,Card type,baseValue,ValueDestroy,Destroys adjacent (item),Adds x when destroyed,Destroy itself after giving badges x times,Destroy itself after x spin,Have x% chance adding y item after each spin,y item,Has x% tranform into y,Transform into y,When adjacent z,x% chance destroy adjacent Agricultural,Adjacent X ,Adds Y,Percentage,price,stage
+Wheat,Gives 2 badges; Has a 20% chance of adding Beer after each spin. Gives 5 badges and adds Mead when destroyed.,Agricultural,2,5,,Mead,999,999,20,Beer,0,,,0,,,1,15,1
+Beer,Gives 3 badges. Gives 5 badges when destroyed.,Agricultural,3,5,,,999,999,0,,0,,,0,,,2,12,1
+Potato,Gives 2 badges.,Agricultural,2,0,,,999,999,0,,0,,,0,,,3,8,1
+Seedling,Gives 1 badge; Has a 20% chance of transforming into Potato or Wheat.,Agricultural,1,0,,,999,999,0,,20,Potato;Wheat,,0,,,3,7,1
+Honey,Gives 1 badge. Destroys adjacent Wheat. ,Agricultural,1,0,Wheat,,999,999,0,,0,,,0,,,2,10,1
+Mead,Gives 5 badges. Adds Music when destroyed. Gives 5 badges when destroyed.,Agricultural,5,5,,Music,999,999,0,,0,,,0,,,1,17,1
+The mead hall,Gives 1 badge. Destroy adjacent Mead. ,Story1,1,0,Mead,,999,999,0,,0,,,0,,,0,0,999
+Hrothgar,Gives 4 badges. ,Story1,4,0,,,999,999,0,,0,,,0,,,0,0,999
+Hrothgar's wife,Gives 2 badges; Adjacent Hrothgar adds Villager.,Story1,2,0,,,999,999,0,,0,,,0,Hrothgar,Villager,0,0,999
+Music,Gives 3 badges. Destroys itself after giving badges 3 times. ( Add Grendel 1 when 3 Music is adjacent for the first time; Add Grendel 2 when 3 Music is adjacent for the second time; Add Grendel 3 when 3 Music is adjacent for the third time.,Story1,3,0,,,3,999,0,,0,,,0,,,0,0,999
+Grendel 1,Has a 10% chance to destroy any adjacent agricultural symbol. Destroy itself after 2 spins.,Story1,0,0,,,999,2,0,,0,,,10,,,0,0,999
+Grendel 2,Has a 20% chance to destroy any adjacent agricultural symbol. Destroy itself after 3 spins.,Story1,0,0,,,999,3,0,,0,,,20,,,0,0,999
+Grendel 3,Has a 30% chance to destroy any adjacent agricultural symbol. Adds Grendel's arm and Underwater lair when destroyed.,Story1,0,0,,Grendel's arm; Underwater lair,999,999,0,,0,,,30,,,0,0,999
+Underwater lair,The place where Grendel's mother lives. Transform adjacent Beowulf into Beowulf with the sword. Has a 40% of chance destroying any adjacent agricultural symbol when Grendel's mother appears.,Story1,0,0,,,999,999,0,,0,,,40,,,0,0,999
+Beowulf,Gives 5 badges. Fights adjacent Grendel. Transform into Beowulf with the sword when adjacent Underwater lair.,Story1,5,0,,,999,999,0,,100,Beowulf with the sword,Underwater lair,0,,,0,0,999
+Beowulf with the sword,Gives 5 badges. Fights adjacent Underwater lair when Grendel's mother appears. ,Story2,5,0,,,999,999,0,,0,,,0,,,0,0,999
+Sheep,Gives 3 badges. Destroys adjacent Seedling. Adds Mutton when destroyed. Has a 10% chance of adding Wool after each spin.,Agricultural,3,0,Seedling,Mutton,999,999,10,Wool,0,,,0,,,1,20,3
+Wool,Gives 3 badges.Gives 6 badges when destroyed.,Agricultural,3,6,,,999,999,0,,0,,,0,,,1,10,3
+Old King Beowulf,Gives 3 badges. Transform adjacent Villager into Warrior. ,Story3,3,0,,,999,999,0,,0,,,0,,,0,0,999
+Villager,Gives 2 badges. Destroys adjacent Beer and Sheep. Adjacent Dragon sleeping adds Gold Cup,Story1,2,0,Bear;Sheep,,999,999,0,,100,Warrior,Old King Beowulf,0,Dragon sleeping,Gold Cup,1,20,1
+Mutton,Gives 2 badges. Gives 6 badges when destroyed.,Agricultural,2,6,,,999,999,0,,0,,,0,,,3,10,3
+Shipping,Gives 1 badge. Destroys adjacent Wool and Mutton. Has a 10% chance of adding Villager after each spin.,Story3,1,0,Wool;Mutton,,999,999,10,Villager,0,,,0,,,1,40,3
+Warrior,Gives 3 badges. Has a 10% chance to transform into Wilglaf when adjacent to Old King Beowulf. Destroy adjacent Mead. ,Story3,3,0,Mead,,999,999,0,,10,Wilglaf,Old King Beowulf,0,,,1,30,3
+Wilglaf,Destroys adjacent Dragon awake.,Story3,0,0,Dragon awake,,999,999,0,,0,,,0,,,0,0,999
+Dragon sleeping,Gives 2 badges. Transform into Dragon awake when adjacent Villager.,Story3,2,0,,,999,999,0,,100,Dragon awake,Villager,0,,,0,0,999
+Gold Cup,Gives 6 badges. Destroy itself after giving badges 3 times. ,Story3,6,0,,,3,999,0,,0,,,0,,,0,0,999
+Dragon awake,Has a 50% chance to destroy any adjacent agricultural symbol. Attacks adjacent Old King Beowulf,Story3,0,0,,,999,999,0,,0,,,50,,,0,0,999
+Grendel's arm,Gives 6 badges. Destroy itself after giving badges 3 times.,Story2,6,0,,,3,999,0,,0,,,0,,,0,0,999
+Empty,none,none,0,0,,,999,999,0,,0,,,0,,,0,0,999
