@@ -10,13 +10,15 @@ using Random = UnityEngine.Random;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
+    private SlotMachine slotMachine;
     public GameObject winPage;
     public GameObject uploadPage;
     public GameObject failPage;
     public GameObject collectPage;
-    public static int countstoWinGame = 5;
+
     public static int badgetoUpload = 30;
     public static int countstoUploadBadge = 5;
+    private int uploadCount = 0;
     private int currentCountstoUploadMoney;
     //再杀死巨魔妈妈之后会转变
     private int currentStage = 1;
@@ -34,19 +36,12 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
         WinEvent += WinGame;
+        slotMachine = SlotMachine.Instance;
     }
 
     public void OnWin()
     {
         WinEvent?.Invoke();
-    }
-
-    private void Update()
-    {
-        if(countstoWinGame == 0)
-        {
-            WinGame();
-        }
     }
 
     public void SetGamePanelActive(int playerBadge)
@@ -138,8 +133,11 @@ public class GameManager : MonoBehaviour
 
     public void uploadBadge()
     {
-        SlotMachine.currentBadge -= badgetoUpload;
+        slotMachine.UpdateBadge(-badgetoUpload);
         uploadPage.SetActive(false);
+        uploadCount++;
+        countstoUploadBadge = 5;
+        UpdateBadgetoUploadaccordingtoCount();
     }
 
     private void WinGame()
@@ -147,24 +145,15 @@ public class GameManager : MonoBehaviour
         winPage.SetActive(true);
     }
 
-    private void NewBadgetoUpload()
+    private void UpdateBadgetoUploadaccordingtoCount()
     {
-        switch (countstoWinGame)
+        if(badgetoUpload < 5)
         {
-            case 4:
-                badgetoUpload = 40;
-                break;
-            case 3:
-                badgetoUpload = 50;
-                break;
-            case 2:
-                badgetoUpload = 55;
-                break;
-            case 1:
-                badgetoUpload = 60;
-                break;
-            default:
-                break;
+            badgetoUpload = 30 + 10 * uploadCount;
+        }
+        else
+        {
+            badgetoUpload = 54 + 4 * uploadCount;
         }
     }
 }

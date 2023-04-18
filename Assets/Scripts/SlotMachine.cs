@@ -821,7 +821,7 @@ public class SlotMachine : MonoBehaviour
         AddSymbolPanel.SetActive(false);
     }
 
-    private void UpdateBadge(int badgeOffset)
+    public void UpdateBadge(int badgeOffset)
     {
         currentBadge += badgeOffset;
         //Debug.Log("current badge:" + currentBadge);
