@@ -816,11 +816,15 @@ public class SlotMachine : MonoBehaviour
         AddSymbolPanel.SetActive(false);
     }
 
+    public void SkipBtn()
+    {
+        AddSymbolPanel.SetActive(false);
+    }
+
     private void UpdateBadge(int badgeOffset)
     {
         currentBadge += badgeOffset;
         //Debug.Log("current badge:" + currentBadge);
-        Debug.Log("offset: "+ badgeOffset);
         badgeShowText.text = currentBadge.ToString();
     }
 

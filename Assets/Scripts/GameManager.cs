@@ -84,6 +84,17 @@ public class GameManager : MonoBehaviour
                 textListInBtn[2].text = CSVLoad.symbolsDict[itemNameList[i]].description;
                 var images = btnList[i].GetComponentsInChildren<Image>();
                 images[2].sprite = Resources.Load<Sprite>(itemNameList[i]);
+                //钱不够，禁止买卖，不够的情况下要改变btn的颜色
+                if (CSVLoad.symbolsDict[itemNameList[i]].price > SlotMachine.currentBadge)
+                {
+                    btnList[i].interactable = false;
+                    images[1].color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+                }
+                else
+                {
+                    btnList[i].interactable = true;
+                    images[1].color = new Color(1f, 1f, 1f, 1f);
+                }
             }
 
             var textList = collectPage.GetComponentsInChildren<TextMeshProUGUI>();
