@@ -30,7 +30,7 @@ class P
 
 public class SlotMachine : MonoBehaviour
 {
-    public GameObject badgeShowText;
+    public TextMeshProUGUI badgeShowText;
     public static int currentBadge = 0;
     public TextMeshProUGUI badgetUI;
     public GameObject AddSymbolPanel;
@@ -772,8 +772,7 @@ public class SlotMachine : MonoBehaviour
             }
         }
 
-        currentBadge += earnedBadge;
-        badgetUI.text = currentBadge.ToString();
+        UpdateBadge(earnedBadge);
         Debug.Log("Update UI");
         emotionAnimation.sequenceCollection.Play().OnComplete(() => {
             emotionAnimation.sequenceCollection = DOTween.Sequence();
@@ -811,7 +810,15 @@ public class SlotMachine : MonoBehaviour
         GameObject btn = GameObject.FindGameObjectWithTag(tag);
         var textName = btn.GetComponentInChildren<TextMeshProUGUI>();
         AddSymboltoPlayer(textName.text);
+        //update badge
+        UpdateBadge(-CSVLoad.symbolsDict[textName.text].price);
         //HideAllItemBadge();
         AddSymbolPanel.SetActive(false);
+    }
+
+    private void UpdateBadge(int badgeOffset)
+    {
+        currentBadge += badgeOffset;
+        badgeShowText.text = currentBadge.ToString();
     }
 }

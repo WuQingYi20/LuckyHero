@@ -15,13 +15,12 @@ public class GameManager : MonoBehaviour
     public GameObject failPage;
     public GameObject collectPage;
     public static int countstoWinGame = 5;
-    public static int badgetoUpload = 80;
+    public static int badgetoUpload = 30;
     public static int countstoUploadBadge = 5;
     private int currentCountstoUploadMoney;
     //再杀死巨魔妈妈之后会转变
     private int currentStage = 1;
     public event Action WinEvent;
-
 
     private void Start()
     {
@@ -81,7 +80,7 @@ public class GameManager : MonoBehaviour
                 //��btn�����Ը�ֵ��symbolname, baseValue, description and image
                 var textListInBtn = btnList[i].GetComponentsInChildren<TextMeshProUGUI>();
                 textListInBtn[0].text = itemNameList[i]; //name
-                textListInBtn[1].text = CSVLoad.symbolsDict[itemNameList[i]].baseValue + " badge";
+                textListInBtn[1].text = "price: "+ CSVLoad.symbolsDict[itemNameList[i]].price;
                 textListInBtn[2].text = CSVLoad.symbolsDict[itemNameList[i]].description;
                 var images = btnList[i].GetComponentsInChildren<Image>();
                 images[2].sprite = Resources.Load<Sprite>(itemNameList[i]);
@@ -92,11 +91,6 @@ public class GameManager : MonoBehaviour
             textList[0].text = "Badge needed for next upload: " + badgetoUpload;
             textList[1].text = "Turns to upload badge: " + currentCountstoUploadMoney;
         }
-    }
-    
-    private void SelectThreeCardstoShow()
-    {
-        //get a new card list based on stage
     }
 
     private int CalculateTotalPossibility()
@@ -147,16 +141,16 @@ public class GameManager : MonoBehaviour
         switch (countstoWinGame)
         {
             case 4:
-                badgetoUpload = 130;
+                badgetoUpload = 40;
                 break;
             case 3:
-                badgetoUpload = 200;
+                badgetoUpload = 50;
                 break;
             case 2:
-                badgetoUpload = 300;
+                badgetoUpload = 55;
                 break;
             case 1:
-                badgetoUpload = 450;
+                badgetoUpload = 60;
                 break;
             default:
                 break;
