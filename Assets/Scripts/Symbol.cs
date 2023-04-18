@@ -1,19 +1,26 @@
+using System;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class Symbol : MonoBehaviour
+public class Symbol : MonoBehaviour, IEquatable<Symbol>
 {
+    private static int sequence = 0;
     public Sprite sprite;
-    public string itemName, description, cardType, objectAddWhenDestroyed, objectAddEveryXTurnsORSpins, objectTurnInto, addItembyChance, transformItem, transformItemAdjacent, addItemAdjacentCondition, addItembyAdjacent;
-    public int baseValue, valueDestroy, caculatedValue, ADOBuffValue, spinToDestroy, effectCountDestroy, turnsToAddSTH, spinsToAddSTH, turnsToTurnInto, percentage, ID, addItemChance, transformItemCance, destroyAgricultureChance, price;
+    public string itemName, description, cardType, objectAddWhenDestroyed, objectAddEveryXTurnsORSpins, objectTurnInto, addItembyChance, transformItemAdjacent, addItemAdjacentCondition, addItembyAdjacent;
+    public int baseValue, valueDestroy, caculatedValue, ADOBuffValue, spinToDestroy, effectCountDestroy, turnsToAddSTH, spinsToAddSTH, turnsToTurnInto, percentage, ID, addItemChance, transformItemChance, destroyAgricultureChance, price, stage;
     public bool markedDestruction = false;
     public int[] points = new int[2] { -1, -1 };
-    public List<string> ADOBuffObject = new List<string>(), ADODestroyObject = new List<string>();
+    public List<string> ADOBuffObjects = new List<string>(), ADODestroyObjects = new List<string>(), transformItems = new List<string>();
+
 
     public Symbol() {}
 
     public Symbol(Symbol symbol)
     {
+        cardType= symbol.cardType;
+        sequence++;
+        ID = sequence;
         sprite = symbol.sprite;
         itemName = symbol.itemName;
         description = symbol.description;
@@ -31,19 +38,23 @@ public class Symbol : MonoBehaviour
         objectTurnInto = symbol.objectTurnInto;
         turnsToTurnInto = symbol.turnsToTurnInto;
         percentage = symbol.percentage;
-        ID = symbol.ID;
         addItemChance = symbol.addItemChance;
         addItembyChance = symbol.addItembyChance;
-        transformItemCance = symbol.transformItemCance;
-        transformItem = symbol.transformItem;
+        transformItemChance = symbol.transformItemChance;
         transformItemAdjacent = symbol.transformItemAdjacent;
         destroyAgricultureChance = symbol.destroyAgricultureChance;
         addItemAdjacentCondition = symbol.addItemAdjacentCondition;
         addItembyAdjacent = symbol.addItembyAdjacent;
         price = symbol.price;
         points = new int[2] { -1, -1 };
-        ADOBuffObject = new List<string>(symbol.ADOBuffObject);
-        ADODestroyObject = new List<string>(symbol.ADODestroyObject);
+        transformItems = new List<string>(symbol.transformItems);
+        ADOBuffObjects = new List<string>(symbol.ADOBuffObjects);
+        ADODestroyObjects = new List<string>(symbol.ADODestroyObjects);
+    }
+
+    public bool Equals(Symbol other)
+    {
+        return ID == other.ID;
     }
 }
 

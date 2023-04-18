@@ -9,20 +9,36 @@ using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
     public GameObject winPage;
     public GameObject uploadPage;
     public GameObject failPage;
     public GameObject collectPage;
     public static int countstoWinGame = 5;
-    public static int badgetoUpload = 80;
+    public static int badgetoUpload = 30;
     public static int countstoUploadBadge = 5;
     private int currentCountstoUploadMoney;
-
-
+    //鍐嶆潃姝诲法榄斿濡堜箣鍚庝細杞彉
+    private int currentStage = 1;
+    public event Action WinEvent;
 
     private void Start()
     {
         currentCountstoUploadMoney = countstoUploadBadge;
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+        WinEvent += WinGame;
+    }
+
+    public void OnWin()
+    {
+        WinEvent?.Invoke();
     }
 
     private void Update()
@@ -55,24 +71,20 @@ public class GameManager : MonoBehaviour
         else
         {
             collectPage.SetActive(true);
-            //需要生成的卡牌
-
-            //获取三个btn的引用并且给他们随机值
             int sumPossibility = CalculateTotalPossibility();
             List<string> itemNameList = new List<string>();
             var btnList = collectPage.GetComponentsInChildren<Button>();
             for (int i =0; i < 3; i++)
             {
                 itemNameList.Add(GenerateRandomCardFromDatabase(sumPossibility));
-                //给btn的属性赋值：symbolname, baseValue, description and image
+                //锟斤拷btn锟斤拷锟斤拷锟皆革拷值锟斤拷symbolname, baseValue, description and image
                 var textListInBtn = btnList[i].GetComponentsInChildren<TextMeshProUGUI>();
                 textListInBtn[0].text = itemNameList[i]; //name
-                textListInBtn[1].text = CSVLoad.symbolsDict[itemNameList[i]].baseValue + " badge";
+                textListInBtn[1].text = "price: "+ CSVLoad.symbolsDict[itemNameList[i]].price;
                 textListInBtn[2].text = CSVLoad.symbolsDict[itemNameList[i]].description;
                 var images = btnList[i].GetComponentsInChildren<Image>();
-                images[1].sprite = Resources.Load<Sprite>(itemNameList[i]);
+                images[2].sprite = Resources.Load<Sprite>(itemNameList[i]);
             }
-
 
             var textList = collectPage.GetComponentsInChildren<TextMeshProUGUI>();
             //next needed badge, turns to upload
@@ -80,13 +92,17 @@ public class GameManager : MonoBehaviour
             textList[1].text = "Turns to upload badge: " + currentCountstoUploadMoney;
         }
     }
-    
+
     private int CalculateTotalPossibility()
     {
+        //according to current stage
         int sumPossibility = 0;
         foreach(var symbol in CSVLoad.symbols)
         {
-            sumPossibility += symbol.possibility; 
+            if (currentStage >= symbol.stage)
+            {
+                sumPossibility += symbol.percentage;
+            } 
         }
         return sumPossibility;
     }
@@ -96,10 +112,13 @@ public class GameManager : MonoBehaviour
         int randValue = Random.Range(0, sumPossibility);
         foreach(var symbol in CSVLoad.symbols)
         {
-            randValue -= symbol.possibility;
-            if(randValue <= 0)
+            if (currentStage >= symbol.stage)
             {
-                return symbol.itemName;
+                randValue -= symbol.percentage;
+                if (randValue <= 0)
+                {
+                    return symbol.itemName;
+                }
             }
         }
         //impossible
@@ -122,19 +141,20 @@ public class GameManager : MonoBehaviour
         switch (countstoWinGame)
         {
             case 4:
-                badgetoUpload = 130;
+                badgetoUpload = 40;
                 break;
             case 3:
-                badgetoUpload = 200;
+                badgetoUpload = 50;
                 break;
             case 2:
-                badgetoUpload = 300;
+                badgetoUpload = 55;
                 break;
             case 1:
-                badgetoUpload = 450;
+                badgetoUpload = 60;
                 break;
             default:
                 break;
         }
     }
 }
+
