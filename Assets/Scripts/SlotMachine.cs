@@ -704,6 +704,8 @@ public class SlotMachine : MonoBehaviour
             symbolsListPlayerTotal.Remove(CSVLoad.symbolsDict[preSymbolNmae]);
             symbolsListInHand.Add(CSVLoad.symbolsDict[symbolName]);
             symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[symbolName]);
+            //下一轮抽卡肯定能是Beowulf，通过call GameManager里面的事件
+            gameManager.OnBeowulfExist();
         }
     }
 

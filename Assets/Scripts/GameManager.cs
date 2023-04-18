@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
     //再杀死巨魔妈妈之后会转变
     private int currentStage = 1;
     public event Action WinEvent;
+    public event Action BeowulfExistEvent;
+    private int beowulfExistFlag = 0;
 
     private void Start()
     {
@@ -36,6 +38,7 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
         WinEvent += WinGame;
+        BeowulfExistEvent += BeowulfExist;
         slotMachine = SlotMachine.Instance;
     }
 
@@ -55,8 +58,8 @@ public class GameManager : MonoBehaviour
                 uploadPage.SetActive(true);
                 var textList = uploadPage.GetComponentsInChildren<TextMeshProUGUI>();
                 textList[0].text = "your current badge: " + SlotMachine.currentBadge;
-                textList[1].text = "you need to upload " + badgetoUpload+" badges";
-                
+                textList[1].text = "you need to upload " + badgetoUpload + " badges";
+
             }
             else
             {
@@ -69,33 +72,48 @@ public class GameManager : MonoBehaviour
             int sumPossibility = CalculateTotalPossibility();
             List<string> itemNameList = new List<string>();
             var btnList = collectPage.GetComponentsInChildren<Button>();
-            for (int i =0; i < 3; i++)
+            for (int i = 0; i < 3; i++)
             {
-                itemNameList.Add(GenerateRandomCardFromDatabase(sumPossibility));
-                //��btn�����Ը�ֵ��symbolname, baseValue, description and image
-                var textListInBtn = btnList[i].GetComponentsInChildren<TextMeshProUGUI>();
-                textListInBtn[0].text = itemNameList[i]; //name
-                textListInBtn[1].text = "price: "+ CSVLoad.symbolsDict[itemNameList[i]].price;
-                textListInBtn[2].text = CSVLoad.symbolsDict[itemNameList[i]].description;
-                var images = btnList[i].GetComponentsInChildren<Image>();
-                images[2].sprite = Resources.Load<Sprite>(itemNameList[i]);
-                //钱不够，禁止买卖，不够的情况下要改变btn的颜色
-                if (CSVLoad.symbolsDict[itemNameList[i]].price > SlotMachine.currentBadge)
+                if (beowulfExistFlag == 1)
                 {
-                    btnList[i].interactable = false;
-                    images[1].color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+                    itemNameList.Add("Beowulf");
                 }
                 else
                 {
-                    btnList[i].interactable = true;
-                    images[1].color = new Color(1f, 1f, 1f, 1f);
+                    itemNameList.Add(GenerateRandomCardFromDatabase(sumPossibility));
                 }
+                PutValuetoCard(btnList[i], itemNameList[i]);
             }
 
+            if (beowulfExistFlag == 1)
+            {
+                beowulfExistFlag++;
+            }
             var textList = collectPage.GetComponentsInChildren<TextMeshProUGUI>();
             //next needed badge, turns to upload
             textList[0].text = "Badge needed for next upload: " + badgetoUpload;
             textList[1].text = "Turns to upload badge: " + currentCountstoUploadMoney;
+        }
+    }
+
+    private void PutValuetoCard(Button btn, string cardName, bool beowulfDisable = false)
+    {
+        var textListInBtn = btn.GetComponentsInChildren<TextMeshProUGUI>();
+        textListInBtn[0].text = cardName; //name
+        textListInBtn[1].text = "price: " + CSVLoad.symbolsDict[cardName].price;
+        textListInBtn[2].text = CSVLoad.symbolsDict[cardName].description;
+        var images = btn.GetComponentsInChildren<Image>();
+        images[2].sprite = Resources.Load<Sprite>(cardName);
+        //钱不够，禁止买卖，不够的情况下要改变btn的颜色
+        if (CSVLoad.symbolsDict[cardName].price > SlotMachine.currentBadge || beowulfDisable)
+        {
+            btn.interactable = false;
+            images[1].color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+        }
+        else
+        {
+            btn.interactable = true;
+            images[1].color = new Color(1f, 1f, 1f, 1f);
         }
     }
 
@@ -155,6 +173,16 @@ public class GameManager : MonoBehaviour
         {
             badgetoUpload = 54 + 4 * uploadCount;
         }
+    }
+
+    internal void OnBeowulfExist()
+    {
+        BeowulfExistEvent?.Invoke();
+    }
+
+    private void BeowulfExist()
+    {
+        beowulfExistFlag++;
     }
 }
 
