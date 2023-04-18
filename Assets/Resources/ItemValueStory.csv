@@ -18,7 +18,7 @@ Beowulf with the sword,Gives 5 badges. Fights adjacent Underwater lair when Gren
 Sheep,Gives 3 badges. Destroys adjacent Seedling. Adds Mutton when destroyed. Has a 10% chance of adding Wool after each spin.,Agricultural,3,0,Seedling,Mutton,999,999,10,Wool,0,,,0,,,1,4,
 Wool,Gives 3 badges.Gives 6 badges when destroyed.,Agricultural,3,6,,,999,999,0,,0,,,0,,,1,40,
 Old King Beowulf,Gives 3 badges. Transform adjacent Villager into Warrior. ,Story3,3,0,,,999,999,0,,0,,,0,,,0,0,
-Villager,Gives 2 badges. Destroys adjacent Beer and Sheep. Adjacent Dragon sleeping adds Gold Cup,Story1,2,0,Bear;Sheep,,999,999,0,,100,                         Warrior,Old King Beowulf,0,Dragon Sleeping,Gold Cup,1,40,
+Villager,Gives 2 badges. Destroys adjacent Beer and Sheep. Adjacent Dragon sleeping adds Gold Cup,Story1,2,0,Bear;Sheep,,999,999,0,,100,Warrior,Old King Beowulf,0,Dragon sleeping,Gold Cup,1,40,
 Mutton,Gives 2 badges. Gives 6 badges when destroyed.,Agricultural,2,6,,,999,999,0,,0,,,0,,,1,40,
 Shipping,Gives 1 badge. Destroys adjacent Wool and Mutton. Has a 10% chance of adding Villager after each spin.,Story3,1,0,Wool;Mutton,,999,999,10,Villager,0,,,0,,,1,55,
 Warrior,Gives 3 badges. Has a 10% chance to transform into Wilglaf when adjacent to Old King Beowulf. Destroy adjacent Mead. ,Story3,3,0,Mead,,999,999,0,,10,Wilglaf,Old King Beowulf,0,,,1,40,

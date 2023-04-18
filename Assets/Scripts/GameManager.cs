@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     public static int badgetoUpload = 80;
     public static int countstoUploadBadge = 5;
     private int currentCountstoUploadMoney;
-
+    public event Action WinEvent;
 
 
     private void Start()
@@ -32,6 +32,12 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        WinEvent += WinGame;
+    }
+
+    public void OnWin()
+    {
+        WinEvent?.Invoke();
     }
 
     private void Update()
@@ -78,7 +84,6 @@ public class GameManager : MonoBehaviour
                 var images = btnList[i].GetComponentsInChildren<Image>();
                 images[2].sprite = Resources.Load<Sprite>(itemNameList[i]);
             }
-
 
             var textList = collectPage.GetComponentsInChildren<TextMeshProUGUI>();
             //next needed badge, turns to upload
