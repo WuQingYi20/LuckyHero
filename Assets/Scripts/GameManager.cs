@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
     public static int badgetoUpload = 80;
     public static int countstoUploadBadge = 5;
     private int currentCountstoUploadMoney;
+    //再杀死巨魔妈妈之后会转变
+    private int currentStage = 1;
     public event Action WinEvent;
 
 
@@ -92,12 +94,21 @@ public class GameManager : MonoBehaviour
         }
     }
     
+    private void SelectThreeCardstoShow()
+    {
+        //get a new card list based on stage
+    }
+
     private int CalculateTotalPossibility()
     {
+        //according to current stage
         int sumPossibility = 0;
         foreach(var symbol in CSVLoad.symbols)
         {
-            sumPossibility += symbol.percentage; 
+            if (currentStage >= symbol.stage)
+            {
+                sumPossibility += symbol.percentage;
+            } 
         }
         return sumPossibility;
     }
@@ -107,10 +118,13 @@ public class GameManager : MonoBehaviour
         int randValue = Random.Range(0, sumPossibility);
         foreach(var symbol in CSVLoad.symbols)
         {
-            randValue -= symbol.percentage;
-            if(randValue <= 0)
+            if (currentStage >= symbol.stage)
             {
-                return symbol.itemName;
+                randValue -= symbol.percentage;
+                if (randValue <= 0)
+                {
+                    return symbol.itemName;
+                }
             }
         }
         //impossible

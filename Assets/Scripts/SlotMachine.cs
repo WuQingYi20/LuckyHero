@@ -115,10 +115,10 @@ public class SlotMachine : MonoBehaviour
 
     private void SlotMachineInitialize()
     {
-        //AddSymbolstoPlayerCount("The mead hall", 1);
-        //AddSymbolstoPlayerCount("Hrothgar", 1);
-        //AddSymbolstoPlayerCount("Hrothgar's wife", 1);
-        //AddSymbolstoPlayerCount("Seedling", 7);
+        AddSymbolstoPlayerCount("The mead hall", 1);
+        AddSymbolstoPlayerCount("Hrothgar", 1);
+        AddSymbolstoPlayerCount("Hrothgar's wife", 1);
+        AddSymbolstoPlayerCount("Seedling", 7);
 
         //AddSymbolstoPlayerCount("Honey", 6);
         //AddSymbolstoPlayerCount("Wheat", 5);
@@ -132,10 +132,10 @@ public class SlotMachine : MonoBehaviour
         //AddSymbolstoPlayerCount("Grendel 3", 5);
         //AddSymbolstoPlayerCount("Grendel 2", 5);
         //AddSymbolstoPlayerCount("Grendel 1", 5);
-        AddSymbolstoPlayerCount("Wilglaf", 15);
+        //AddSymbolstoPlayerCount("Wilglaf", 15);
         //AddSymbolstoPlayerCount("Old King Beowulf", 3);
         //AddSymbolstoPlayerCount("Villager", 16);
-        AddSymbolstoPlayerCount("Dragon awake", 1);
+        //AddSymbolstoPlayerCount("Dragon awake", 1);
         //AddSymbolstoPlayerCount("Dragon sleeping", 1);
     }
 

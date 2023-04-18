@@ -8,7 +8,7 @@ public class Symbol : MonoBehaviour, IEquatable<Symbol>
     private static int sequence = 0;
     public Sprite sprite;
     public string itemName, description, cardType, objectAddWhenDestroyed, objectAddEveryXTurnsORSpins, objectTurnInto, addItembyChance, transformItemAdjacent, addItemAdjacentCondition, addItembyAdjacent;
-    public int baseValue, valueDestroy, caculatedValue, ADOBuffValue, spinToDestroy, effectCountDestroy, turnsToAddSTH, spinsToAddSTH, turnsToTurnInto, percentage, ID, addItemChance, transformItemChance, destroyAgricultureChance, price;
+    public int baseValue, valueDestroy, caculatedValue, ADOBuffValue, spinToDestroy, effectCountDestroy, turnsToAddSTH, spinsToAddSTH, turnsToTurnInto, percentage, ID, addItemChance, transformItemChance, destroyAgricultureChance, price, stage;
     public bool markedDestruction = false;
     public int[] points = new int[2] { -1, -1 };
     public List<string> ADOBuffObjects = new List<string>(), ADODestroyObjects = new List<string>(), transformItems = new List<string>();
