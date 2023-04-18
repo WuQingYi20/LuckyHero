@@ -6986,7 +6986,6 @@ MonoBehaviour:
   badgeShowText: {fileID: 1833306047}
   badgetUI: {fileID: 1833306047}
   AddSymbolPanel: {fileID: 715780345}
-  gameManager: {fileID: 1902807494}
   backgroundImage: {fileID: 1040729598}
 --- !u!114 &1835775207
 MonoBehaviour:
@@ -8028,8 +8027,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2056318366}
   - component: {fileID: 2056318367}
+  - component: {fileID: 2056318368}
   m_Layer: 0
-  m_Name: SoundEffectManager
+  m_Name: SoundtManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8062,12 +8062,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 909e530a122d9c2498c04c1c676e6f66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  emotionEffect: {fileID: 0}
   soundEffects:
   - name: 
     clip: {fileID: 0}
+    emotion: 0
     volume: 0
     pitch: 0
     source: {fileID: 0}
+--- !u!114 &2056318368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2056318365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf988a3a708a93743a7eb9aaea4f7f96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  backgroundMusics: []
 --- !u!1 &2073372368
 GameObject:
   m_ObjectHideFlags: 0

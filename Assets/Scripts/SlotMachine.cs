@@ -34,7 +34,8 @@ public class SlotMachine : MonoBehaviour
     public static int currentBadge = 0;
     public TextMeshProUGUI badgetUI;
     public GameObject AddSymbolPanel;
-    public GameManager gameManager;
+    private GameManager gameManager;
+    private SoundEffectManager soundEffectManager;
     //magic value4, 5
     private Symbol[,] slots = new Symbol[4, 5];
     private Image[,] images = new Image[4, 5];
@@ -78,7 +79,7 @@ public class SlotMachine : MonoBehaviour
 
     private void Awake()
     {
-        emotionAnimation = EmotionAnimation.Instance;
+        
         slotMachine = GameObject.FindGameObjectWithTag("SlotMachine");
         Image[] imagesList = slotMachine.GetComponentsInChildren<Image>();
         levelTransformData = new LevelTransformData();
@@ -98,10 +99,14 @@ public class SlotMachine : MonoBehaviour
         {
             instance = this;
         }
+        
     }
 
     private void Start()
     {
+        emotionAnimation = EmotionAnimation.Instance;
+        soundEffectManager = SoundEffectManager.Instance;
+        gameManager = GameManager.instance;
         SlotMachineInitialize();
         randPoitionSymbol();
         LoadSpritebySymbolName(4);
