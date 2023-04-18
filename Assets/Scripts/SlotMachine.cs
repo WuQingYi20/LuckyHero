@@ -465,7 +465,6 @@ public class SlotMachine : MonoBehaviour
                         {
                             //remove original card and add new transform card: slots, hand and intotal
                             var itemID = roll / slots[i, j].transformItemChance;
-                            Debug.Log("TransformedItem: "+ slots[i, j].transformItems[itemID]);
                             var newItem = slots[i, j].transformItems[itemID];
                             var oldItem = slots[i, j].itemName;
                             int tempRow = i;
@@ -811,6 +810,7 @@ public class SlotMachine : MonoBehaviour
         var textName = btn.GetComponentInChildren<TextMeshProUGUI>();
         AddSymboltoPlayer(textName.text);
         //update badge
+        Debug.Log(textName.text+" price: " + CSVLoad.symbolsDict[textName.text].price);
         UpdateBadge(-CSVLoad.symbolsDict[textName.text].price);
         //HideAllItemBadge();
         AddSymbolPanel.SetActive(false);
@@ -819,6 +819,13 @@ public class SlotMachine : MonoBehaviour
     private void UpdateBadge(int badgeOffset)
     {
         currentBadge += badgeOffset;
+        //Debug.Log("current badge:" + currentBadge);
+        Debug.Log("offset: "+ badgeOffset);
         badgeShowText.text = currentBadge.ToString();
+    }
+
+    private void Update()
+    {
+        //Debug.Log("player badge:"+ currentBadge);
     }
 }
