@@ -56,8 +56,7 @@ public class CSVLoad : MonoBehaviour
                 price = int.Parse(row[18]),
                 stage = int.Parse(row[19]),
                 //update after generating
-                points = new int[2] { -1, -1 },
-                ID = i
+                points = new int[2] { -1, -1 }
             };
 
             symbols.Add(symbolTemp);

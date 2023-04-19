@@ -152,7 +152,7 @@ public class SlotMachine : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             Symbol symbolTemp = new Symbol(CSVLoad.symbolsDict[symbolName]);
-            symbolTemp.ID = idCount++;
+            //symbolTemp.ID = idCount++;
             symbolsListPlayerTotal.Add(symbolTemp);
             symbolsListInHand.Add(symbolTemp);
         }
@@ -623,7 +623,7 @@ public class SlotMachine : MonoBehaviour
                                     soundEffectManager.Play("oh");
                                 }).OnComplete(() =>
                                 {
-                                    symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[addItem]);
+                                    AddSymbolstoPlayerCount(addItem);
                                     symbolsListInHand.Add(CSVLoad.symbolsDict[addItem]);
                                 }));
                         }
@@ -648,7 +648,7 @@ public class SlotMachine : MonoBehaviour
                                     //also need to add destroyed value
                                     slots[tempRow, tempColum].caculatedValue += slots[tempRow, tempColum].valueDestroy;
                                     //add sth,maybe also animation
-                                    symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[slots[tempRow, tempColum].objectAddWhenDestroyed]);
+                                    AddSymbolstoPlayerCount(slots[tempRow, tempColum].objectAddWhenDestroyed);
                                 }));
                 }
                 else
@@ -706,7 +706,7 @@ public class SlotMachine : MonoBehaviour
         //add items, destroy items and change background
         foreach(var additem in levelTransformData.addItems)
         {
-            symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[additem]);
+            AddSymbolstoPlayerCount(additem);
             symbolsListInHand.Add(CSVLoad.symbolsDict[additem]);
         }
 
@@ -737,7 +737,7 @@ public class SlotMachine : MonoBehaviour
                 return;
             }
             symbolsListInHand.Add(CSVLoad.symbolsDict[symbolName]);
-            symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[symbolName]);
+            AddSymbolstoPlayerCount(symbolName);
             grendelExist = true;
         }
         else
@@ -746,7 +746,7 @@ public class SlotMachine : MonoBehaviour
             symbolsListInHand.Remove(CSVLoad.symbolsDict[preSymbolNmae]);
             RemoveCardFromPlayerIntoal(CSVLoad.symbolsDict[preSymbolNmae]);
             symbolsListInHand.Add(CSVLoad.symbolsDict[symbolName]);
-            symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[symbolName]);
+            AddSymbolstoPlayerCount(symbolName);
             //下一轮抽卡肯定能是Beowulf，通过call GameManager里面的事件
             gameManager.OnBeowulfExist();
         }
@@ -777,7 +777,7 @@ public class SlotMachine : MonoBehaviour
         Symbol newSymbol = CSVLoad.symbolsDict[newSymbolName];
 
         symbolsListInHand.Add(newSymbol);
-        symbolsListPlayerTotal.Add(newSymbol);
+        AddSymbolstoPlayerCount(newSymbolName);
 
         Debug.Log("newItemName: "+ newSymbolName);
         slots[row, colum] = CSVLoad.symbolsDict[newSymbolName];
@@ -797,7 +797,7 @@ public class SlotMachine : MonoBehaviour
                 int originalValue = slots[defendX, defendY].baseValue + slots[defendX, defendY].valueDestroy;
                 slots[defendX, defendY].caculatedValue = originalValue;
                 //add sth,maybe also animation
-                symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[slots[defendX, defendY].objectAddWhenDestroyed]);
+                AddSymbolstoPlayerCount(slots[defendX, defendY].objectAddWhenDestroyed);
             }));
         emotionAnimation.sequenceCollection.Join(
             emotionAnimation.AnimateSadness(images[defendX, defendY].rectTransform)
