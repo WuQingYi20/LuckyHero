@@ -6,7 +6,7 @@ public class SoundEffectManager : MonoBehaviour
 {
     public static SoundEffectManager Instance;
 
-    public enum Emotion { Happiness, Sadness, Fear, Anger, Surprise, Disgust }
+    public enum Emotion { None, Happy, Sad, Angry, Fear, Surprise }
 
     [System.Serializable]
     public class SoundEffect
@@ -19,7 +19,6 @@ public class SoundEffectManager : MonoBehaviour
         [HideInInspector] public AudioSource source;
     }
 
-    public GameObject emotionEffect; // Assign a common GameObject for all animations
     public List<SoundEffect> soundEffects;
 
     private void Awake()
@@ -44,14 +43,18 @@ public class SoundEffectManager : MonoBehaviour
         }
     }
 
-    public void Play(string name, float speed = 1f)
+    public void Play(string name, bool useEmotion = true, float speed = 1f)
     {
         SoundEffect sfx = soundEffects.Find(s => s.name == name);
         if (sfx != null)
         {
             sfx.source.pitch = speed;
             sfx.source.Play();
-            PlayEmotionEffect(sfx.emotion);
+
+            if (useEmotion)
+            {
+                PlayEmotionEffect(sfx.emotion, sfx.source);
+            }
         }
         else
         {
@@ -59,27 +62,47 @@ public class SoundEffectManager : MonoBehaviour
         }
     }
 
-    private void PlayEmotionEffect(Emotion emotion)
+    private void PlayEmotionEffect(Emotion emotion, AudioSource audioSource)
     {
+        // Example: Sound changes using DOTween based on emotion
+
         switch (emotion)
         {
-            case Emotion.Happiness:
-                emotionEffect.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.3f).SetLoops(2, LoopType.Yoyo);
+            case Emotion.Happy:
+                // Happy sound: Increase pitch and volume slightly
+                DOTween.Sequence()
+                    .Append(audioSource.DOPitch(1.1f, 0.5f))
+                    .Join(audioSource.DOFade(1.1f, 0.5f));
                 break;
-            case Emotion.Sadness:
-                emotionEffect.transform.DOLocalMoveY(-0.5f, 1f).SetLoops(2, LoopType.Yoyo);
+            case Emotion.Sad:
+                // Sad sound: Decrease pitch and volume slightly
+                DOTween.Sequence()
+                    .Append(audioSource.DOPitch(0.9f, 0.5f))
+                    .Join(audioSource.DOFade(0.9f, 0.5f));
+                break;
+            case Emotion.Angry:
+                // Angry sound: Increase pitch and volume
+                DOTween.Sequence()
+                    .Append(audioSource.DOPitch(1.2f, 0.5f))
+                    .Join(audioSource.DOFade(1.2f, 0.5f));
                 break;
             case Emotion.Fear:
-                emotionEffect.transform.DOShakePosition(1f, 0.5f, 20, 90, false, true);
-                break;
-            case Emotion.Anger:
-                emotionEffect.transform.DOShakeScale(1f, 0.5f, 20, 90, true);
+                // Fear sound: Decrease pitch, increase volume
+                DOTween.Sequence()
+                    .Append(audioSource.DOPitch(0.8f, 0.5f))
+                    .Join(audioSource.DOFade(1.2f, 0.5f));
                 break;
             case Emotion.Surprise:
-                emotionEffect.transform.DOPunchScale(new Vector3(0.5f, 0.5f, 0.5f), 1f, 5, 0.5f);
+                // Surprise sound: Rapid pitch and volume fluctuations
+                DOTween.Sequence()
+                    .Append(audioSource.DOPitch(1.1f, 0.1f))
+                    .Join(audioSource.DOFade(1.1f, 0.1f))
+                    .Append(audioSource.DOPitch(0.9f, 0.1f))
+                    .Join(audioSource.DOFade(0.9f, 0.1f))
+                    .SetLoops(4, LoopType.Yoyo);
                 break;
-            case Emotion.Disgust:
-                emotionEffect.transform.DOShakeRotation(1f, 30, 20, 90, false);
+            default:
+                // No emotion: Do not change sound properties
                 break;
         }
     }

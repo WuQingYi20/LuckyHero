@@ -339,7 +339,9 @@ public class SlotMachine : MonoBehaviour
 
                         musicComboSequence.Append(emotionAnimation.AnimateHappiness(images[i, j].rectTransform));
                         musicComboSequence.Join(emotionAnimation.AnimateHappiness(images[i, j + 1].rectTransform));
-                        musicComboSequence.Join(emotionAnimation.AnimateHappiness(images[i, j + 2].rectTransform).OnComplete(() =>
+                        musicComboSequence.Join(emotionAnimation.AnimateHappiness(images[i, j + 2].rectTransform).OnStart(() => {
+                            soundEffectManager.Play("oh");
+                        }).OnComplete(() =>
                         {
                             if (musicCombooCount <= 3)
                             {
@@ -353,7 +355,9 @@ public class SlotMachine : MonoBehaviour
                     {
                         emotionAnimation.sequenceCollection.Append(emotionAnimation.AnimateHappiness(images[i, j].rectTransform));
                         emotionAnimation.sequenceCollection.Join(emotionAnimation.AnimateHappiness(images[i + 1, j].rectTransform));
-                        emotionAnimation.sequenceCollection.Join(emotionAnimation.AnimateHappiness(images[i + 2, j].rectTransform).OnComplete(
+                        emotionAnimation.sequenceCollection.Join(emotionAnimation.AnimateHappiness(images[i + 2, j].rectTransform).OnStart(() => {
+                            soundEffectManager.Play("oh");
+                        }).OnComplete(
                             () =>
                             {
                                 if (musicCombooCount <= 3)
@@ -382,14 +386,15 @@ public class SlotMachine : MonoBehaviour
                     {
                         if (slots[point.x, point.y].itemName.Contains("Grendel"))
                         {
-                            Debug.Log("attack Grendel");
                             int tempX = point.x;
                             int tempY = point.y;
                             int tempRow = i;
                             int tempColum = j;
                             if (slots[point.x, point.y].itemName == "Grendel 3")
                             {
-                                emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).SetAutoKill(false).OnComplete(
+                                emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).OnStart(() => {
+                                    soundEffectManager.Play("sword");
+                                }).SetAutoKill(false).OnComplete(
                                     () =>
                                     {
                                         Debug.Log("Transform Grendel 3");
@@ -399,7 +404,9 @@ public class SlotMachine : MonoBehaviour
                             }
                             else if (slots[point.x, point.y].itemName == "Grendel 2")
                             {
-                                emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).SetAutoKill(false).OnComplete(
+                                emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).SetAutoKill(false).OnStart(() => {
+                                    soundEffectManager.Play("sword");
+                                }).OnComplete(
                                     () =>
                                     {
                                         Debug.Log("Transform Grendel 2");
@@ -409,7 +416,9 @@ public class SlotMachine : MonoBehaviour
                             }
                             else if (slots[point.x, point.y].itemName == "Grendel 1")
                             {
-                                emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).SetAutoKill(false).OnComplete(
+                                emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).SetAutoKill(false).OnStart(() => {
+                                    soundEffectManager.Play("sword");
+                                }).OnComplete(
                                     () =>
                                     {
                                         Debug.Log("Transform Grendel 1");
@@ -428,7 +437,9 @@ public class SlotMachine : MonoBehaviour
                             slots[point.x, point.y].markedDestruction = true;
                             
                             emotionAnimation.sequenceCollection.Append(
-                                emotionAnimation.AnimateExcitement(images[i, j].rectTransform).OnComplete(() =>
+                                emotionAnimation.AnimateExcitement(images[i, j].rectTransform).OnStart(() => {
+                                    soundEffectManager.Play("dying");
+                                }).OnComplete(() =>
                             {
                                 var tempX = point.x;
                                 var tempY = point.y;
@@ -473,7 +484,9 @@ public class SlotMachine : MonoBehaviour
                             int tempRow = i;
                             int tempColum = j;
                             emotionAnimation.sequenceCollection.Append(
-                                                               emotionAnimation.AnimateSurprise(images[i, j].rectTransform).OnComplete(() =>
+                                                               emotionAnimation.AnimateSurprise(images[i, j].rectTransform).OnStart(() =>{
+                                                                   soundEffectManager.Play("surpise");
+                            }).OnComplete(() =>
                                                                {
                                                                    TransformSymbol(tempRow, tempColum, oldItem, newItem); 
                                                                }));
@@ -493,7 +506,9 @@ public class SlotMachine : MonoBehaviour
                                     int tempRow = i;
                                     int tempColum = j;
                                     emotionAnimation.sequenceCollection.Append(
-                                                                       emotionAnimation.AnimateSurprise(images[i, j].rectTransform).OnComplete(() =>
+                                                                       emotionAnimation.AnimateSurprise(images[i, j].rectTransform).OnStart(() => {
+                                                                           soundEffectManager.Play("surpise");
+                                                                       }).OnComplete(() =>
                                                                        {
                                                                            TransformSymbol(tempRow, tempColum, oldItem, newItem);
 
@@ -508,6 +523,7 @@ public class SlotMachine : MonoBehaviour
                 //if beowulf is not appear, mother appear and has effect
                 if (slots[i, j].itemName == "Underwater lair")
                 {
+
                     var beowulfExistFlag = false;
                     //如果有beowulf就不变身
                     foreach(var point in pointsNeighbours)
@@ -520,7 +536,9 @@ public class SlotMachine : MonoBehaviour
                     if (!beowulfExistFlag)
                     {
                         Sprite motherSprite = Resources.Load<Sprite>("Grendel's mother");
-                        emotionAnimation.sequenceCollection.Append(emotionAnimation.AnimateHorizontalFlip(images[i, j].rectTransform, motherSprite));
+                        emotionAnimation.sequenceCollection.Append(emotionAnimation.AnimateHorizontalFlip(images[i, j].rectTransform, motherSprite).OnStart(() => {
+                            soundEffectManager.Play("sword");
+                        }));
                     }
                 }
 
@@ -559,7 +577,9 @@ public class SlotMachine : MonoBehaviour
                         var addItem = slots[i, j].addItembyChance;
                         //sound effect, animation
                         emotionAnimation.sequenceCollection.Append(
-                            emotionAnimation.AnimateHappiness(images[i, j].rectTransform).OnComplete(() =>
+                            emotionAnimation.AnimateHappiness(images[i, j].rectTransform).OnStart(() => {
+                                soundEffectManager.Play("oh");
+                            }).OnComplete(() =>
                         {
                             symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[addItem]);
                             symbolsListInHand.Add(CSVLoad.symbolsDict[addItem]);
@@ -586,7 +606,9 @@ public class SlotMachine : MonoBehaviour
                             }
                                 //sound effect, animation
                                 emotionAnimation.sequenceCollection.Append(
-                                emotionAnimation.AnimateHappiness(images[i, j].rectTransform).OnComplete(() =>
+                                emotionAnimation.AnimateHappiness(images[i, j].rectTransform).OnStart(() => {
+                                    soundEffectManager.Play("oh");
+                                }).OnComplete(() =>
                                 {
                                     symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[addItem]);
                                     symbolsListInHand.Add(CSVLoad.symbolsDict[addItem]);
@@ -598,10 +620,13 @@ public class SlotMachine : MonoBehaviour
                 //after x spins,self destroy
                 if (slots[i, j].effectCountDestroy == 1)
                 {
+
                     var tempRow = i;
                     var tempColum = j;
                     emotionAnimation.sequenceCollection.Append(
-                                emotionAnimation.AnimateSadness(images[i, j].rectTransform).OnComplete(() =>
+                                emotionAnimation.AnimateSadness(images[i, j].rectTransform).OnStart(() => {
+                                    soundEffectManager.Play("dying");
+                                }).OnComplete(() =>
                                 {
                                     symbolsListInHand.Remove(slots[tempRow, tempColum]);
                                     symbolsListPlayerTotal.Remove(slots[tempRow, tempColum]);
@@ -635,7 +660,9 @@ public class SlotMachine : MonoBehaviour
                             int tempColum = j;
                             if (slots[point.x, point.y].itemName == "Underwater lair")
                             {
-                                emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).SetAutoKill(false).OnComplete(
+                                emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).OnStart(() => {
+                                    soundEffectManager.Play("sword");
+                                }).SetAutoKill(false).OnComplete(
                                     () =>
                                     {
                                         Debug.Log("Transform Underwater lair");
@@ -718,7 +745,7 @@ public class SlotMachine : MonoBehaviour
     }
 
     private void TransformSymbol(int row, int colum, string oldSymbolName, string newSymbolName)
-    {
+    {   
         if (newSymbolName == "Wilglaf")
         {
             if (wilglafExist)
@@ -775,8 +802,7 @@ public class SlotMachine : MonoBehaviour
                 earnedBadge += slots[i, j].caculatedValue;
             }
         }
-
-        UpdateBadge(earnedBadge);
+        
         Debug.Log("Update UI");
         emotionAnimation.sequenceCollection.Play().OnComplete(() => {
             emotionAnimation.sequenceCollection = DOTween.Sequence();
@@ -788,6 +814,8 @@ public class SlotMachine : MonoBehaviour
                     slots[i, j].caculatedValue = slots[i, j].baseValue;
                 }
             }
+            soundEffectManager.Play("coin");
+            UpdateBadge(earnedBadge);
             StartCoroutine(SetPanelActivewithDelay(1f));
         });
     }

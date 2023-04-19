@@ -1094,7 +1094,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.6925659, y: -1.3850098}
+  m_AnchoredPosition: {x: -0.69262695, y: -1.3850098}
   m_SizeDelta: {x: 59.572, y: 44.333}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &209807936
@@ -3330,7 +3330,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.69281006, y: -1.385315}
+  m_AnchoredPosition: {x: -0.6928711, y: -1.385315}
   m_SizeDelta: {x: 59.5724, y: 44.3329}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &724426729
@@ -8062,13 +8062,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 909e530a122d9c2498c04c1c676e6f66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  emotionEffect: {fileID: 0}
   soundEffects:
-  - name: 
-    clip: {fileID: 0}
-    emotion: 0
-    volume: 0
-    pitch: 0
+  - name: surpise
+    clip: {fileID: 8300000, guid: 2e52d64f2cd20b04ab98d59588e0da0f, type: 3}
+    emotion: 5
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+  - name: sword
+    clip: {fileID: 8300000, guid: 564655189c766354cb367676b57b7efa, type: 3}
+    emotion: 4
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+  - name: eating
+    clip: {fileID: 8300000, guid: 77ec46ccc96cc9d4294f916e5da7d6dd, type: 3}
+    emotion: 1
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+  - name: dying
+    clip: {fileID: 8300000, guid: 7f20fe3016fc94840bcd041f788dc46a, type: 3}
+    emotion: 2
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+  - name: oh
+    clip: {fileID: 8300000, guid: 5df7ef518445e9d4fac7a6ee1c07bab8, type: 3}
+    emotion: 1
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+  - name: coin
+    clip: {fileID: 8300000, guid: 720a5cb4aeabb2e44979decf208b4060, type: 3}
+    emotion: 1
+    volume: 1
+    pitch: 1
     source: {fileID: 0}
 --- !u!114 &2056318368
 MonoBehaviour:
@@ -8082,7 +8111,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf988a3a708a93743a7eb9aaea4f7f96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  backgroundMusics: []
+  backgroundMusics:
+  - scenario: bgm
+    clip: {fileID: 8300000, guid: 5669393aff634ca43bf607a47747fc6a, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+  - scenario: end
+    clip: {fileID: 8300000, guid: 5669393aff634ca43bf607a47747fc6a, type: 3}
+    volume: 0
+    pitch: 1
+    source: {fileID: 0}
 --- !u!1 &2073372368
 GameObject:
   m_ObjectHideFlags: 0

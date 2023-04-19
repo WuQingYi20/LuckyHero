@@ -10,8 +10,8 @@ public class BackgroundMusicManager : MonoBehaviour
     {
         public string scenario;
         public AudioClip clip;
-        [Range(0f, 1f)] public float volume = 1f;
-        [Range(.1f, 3f)] public float pitch = 1f;
+        [Range(0f, 1f)] public float volume;
+        [Range(.1f, 3f)] public float pitch;
         [HideInInspector] public AudioSource source;
     }
 
@@ -33,6 +33,7 @@ public class BackgroundMusicManager : MonoBehaviour
 
         foreach (BackgroundMusic bgm in backgroundMusics)
         {
+            Debug.Log("volume: "+ bgm.volume);
             bgm.source = gameObject.AddComponent<AudioSource>();
             bgm.source.clip = bgm.clip;
             bgm.source.volume = bgm.volume;
@@ -55,7 +56,7 @@ public class BackgroundMusicManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Background music for scenario: " + scenario + " not found!");
+            Debug.LogError("Background music for scenario: " + scenario + " not found!");
         }
     }
 }
