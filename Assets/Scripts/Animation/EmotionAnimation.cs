@@ -39,6 +39,10 @@ public class EmotionAnimation : MonoBehaviour
         sequenceCollection.Pause();
     }
 
+    private void Start()
+    {
+        sequenceCollection.timeScale= 1.3f;
+    }
 
     public void StartAnimation()
     {

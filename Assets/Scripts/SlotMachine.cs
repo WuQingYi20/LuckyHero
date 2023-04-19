@@ -6,8 +6,6 @@ using System.Drawing;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Cryptography;
 using TMPro;
-using Unity.VisualScripting;
-using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 using UnityEngine.UI;
 using static Unity.Burst.Intrinsics.X86.Avx;
@@ -34,6 +32,7 @@ public class SlotMachine : MonoBehaviour
     public GameObject AddSymbolPanel;
     private GameManager gameManager;
     private SoundEffectManager soundEffectManager;
+    private BackgroundMusicManager backgroundMusicManager;
     //magic value4, 5
     private Symbol[,] slots = new Symbol[4, 5];
     private Image[,] images = new Image[4, 5];
@@ -43,6 +42,8 @@ public class SlotMachine : MonoBehaviour
     private bool grendelExist = false;
     private bool goldCupExist = false;
     private bool wilglafExist = false;
+    private bool spinAvaliable = true;
+    public Button spinBtn;
 
 
     //List<Symbol> symbolsListInPlayer = new List<Symbol>();
@@ -102,6 +103,8 @@ public class SlotMachine : MonoBehaviour
 
     private void Start()
     {
+        backgroundMusicManager = BackgroundMusicManager.Instance;
+        backgroundMusicManager.Play("bgm");
         emotionAnimation = EmotionAnimation.Instance;
         soundEffectManager = SoundEffectManager.Instance;
         gameManager = GameManager.instance;
@@ -128,8 +131,10 @@ public class SlotMachine : MonoBehaviour
         //AddSymbolstoPlayerCount("Underwater lair", 1);
         //AddSymbolstoPlayerCount("Seedling", 15);
         //AddSymbolstoPlayerCount("Music", 8);
-        //AddSymbolstoPlayerCount("Hrothgar", 5);
-        //AddSymbolstoPlayerCount("Hrothgar's wife", 5);
+        //AddSymbolstoPlayerCount("Hrothgar", 3);
+        //AddSymbolstoPlayerCount("Hrothgar's wife", 3);
+        //AddSymbolstoPlayerCount("Seedling", 7);
+        //AddSymbolstoPlayerCount("The mead hall", 1);
         //AddSymbolstoPlayerCount("Beowulf", 3);
         //AddSymbolstoPlayerCount("Beowulf with the sword", 1);
         //AddSymbolstoPlayerCount("Grendel 3", 5);
@@ -142,7 +147,7 @@ public class SlotMachine : MonoBehaviour
         //AddSymbolstoPlayerCount("Dragon sleeping", 1);
     }
 
-    private void AddSymbolstoPlayerCount(string symbolName, int count)
+    private void AddSymbolstoPlayerCount(string symbolName, int count = 1)
     {
         for (int i = 0; i < count; i++)
         {
@@ -257,6 +262,7 @@ public class SlotMachine : MonoBehaviour
         {
             StartCoroutine(CaculateMoneywithDelay());
         }
+
     }
 
     IEnumerator CaculateMoneywithDelay()
@@ -267,7 +273,14 @@ public class SlotMachine : MonoBehaviour
 
     public void StartCoroutineSpin(float waitTime)
     {
-        StartCoroutine(Spin(20, waitTime));
+        Debug.Log("spinavaliable "+ spinAvaliable); 
+        if (spinAvaliable)
+        {
+            spinAvaliable = false;
+            //make spinBtn unavaliable
+            spinBtn.interactable = false;
+            StartCoroutine(Spin(20, waitTime));
+        }
     }
 
     private struct Point
@@ -445,15 +458,15 @@ public class SlotMachine : MonoBehaviour
                                 var tempY = point.y;
                                 var tempRow = i;
                                 var tempColum = j;
-                                symbolsListInHand.Remove(slots[tempX, tempY]);
-                                symbolsListPlayerTotal.Remove(slots[tempX, tempY]);
+                                RemoveCardFromPlayerIntoal(slots[tempX, tempY]);
                                 images[tempX, tempY].sprite = Resources.Load<Sprite>("Empty");
                                 //also need to add destroyed value
                                 slots[tempX, tempY].caculatedValue += slots[tempX, tempY].valueDestroy;
                                 //add sth,maybe also animation
                                 if (slots[tempX, tempY].objectAddWhenDestroyed != "")
                                 {
-                                    symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[slots[tempX, tempY].objectAddWhenDestroyed]);
+                                    soundEffectManager.Play("oh");
+                                    AddSymbolstoPlayerCount(slots[tempX, tempY].objectAddWhenDestroyed);
                                 }
                                 
 
@@ -553,12 +566,12 @@ public class SlotMachine : MonoBehaviour
                                 emotionAnimation.AnimateExcitement(images[i, j].rectTransform).OnComplete(() =>
                                 {
                                     symbolsListInHand.Remove(slots[point.x, point.y]);
-                                    symbolsListPlayerTotal.Remove(slots[point.x, point.y]);
+                                    RemoveCardFromPlayerIntoal(slots[point.x, point.y]);
                                     images[point.x, point.y].sprite = Resources.Load<Sprite>("Empty");
                                     //also need to add destroyed value
                                     slots[point.x, point.y].caculatedValue += slots[point.x, point.y].valueDestroy;
                                     //add sth,maybe also animation
-                                    symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[slots[point.x, point.y].objectAddWhenDestroyed]);
+                                    AddSymbolstoPlayerCount(slots[point.x, point.y].objectAddWhenDestroyed);
                                 }));
                                 emotionAnimation.sequenceCollection.Join(
                                     emotionAnimation.AnimateSadness(images[point.x, point.y].rectTransform)
@@ -581,7 +594,7 @@ public class SlotMachine : MonoBehaviour
                                 soundEffectManager.Play("oh");
                             }).OnComplete(() =>
                         {
-                            symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[addItem]);
+                            AddSymbolstoPlayerCount(addItem);
                             symbolsListInHand.Add(CSVLoad.symbolsDict[addItem]);
                         }));
                         
@@ -629,7 +642,7 @@ public class SlotMachine : MonoBehaviour
                                 }).OnComplete(() =>
                                 {
                                     symbolsListInHand.Remove(slots[tempRow, tempColum]);
-                                    symbolsListPlayerTotal.Remove(slots[tempRow, tempColum]);
+                                    RemoveCardFromPlayerIntoal(slots[tempRow, tempColum]);
                                     images[tempRow, tempColum].sprite = Resources.Load<Sprite>("Empty");
                                     slots[tempRow, tempColum] = CSVLoad.symbolsDict["Empty"];
                                     //also need to add destroyed value
@@ -704,7 +717,7 @@ public class SlotMachine : MonoBehaviour
             {
                 if(iteminTotal.itemName == destroyItem)
                 {
-                    symbolsListPlayerTotal.Remove(iteminTotal);
+                    RemoveCardFromPlayerIntoal(iteminTotal);
                 }
             }
         }
@@ -731,7 +744,7 @@ public class SlotMachine : MonoBehaviour
         {
             string preSymbolNmae = "Grendel " + (comboCount - 1);
             symbolsListInHand.Remove(CSVLoad.symbolsDict[preSymbolNmae]);
-            symbolsListPlayerTotal.Remove(CSVLoad.symbolsDict[preSymbolNmae]);
+            RemoveCardFromPlayerIntoal(CSVLoad.symbolsDict[preSymbolNmae]);
             symbolsListInHand.Add(CSVLoad.symbolsDict[symbolName]);
             symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[symbolName]);
             //下一轮抽卡肯定能是Beowulf，通过call GameManager里面的事件
@@ -759,13 +772,14 @@ public class SlotMachine : MonoBehaviour
         }
 
         Debug.Log("oldItemName: "+ oldSymbolName);
-        symbolsListInHand.Remove(slots[row, colum]);
-        symbolsListPlayerTotal.Remove(slots[row, colum]);
-
+        RemoveCardFromPlayerIntoal(slots[row, colum]);
+        Debug.Log("newItemName: ");
         Symbol newSymbol = CSVLoad.symbolsDict[newSymbolName];
+
         symbolsListInHand.Add(newSymbol);
         symbolsListPlayerTotal.Add(newSymbol);
 
+        Debug.Log("newItemName: "+ newSymbolName);
         slots[row, colum] = CSVLoad.symbolsDict[newSymbolName];
         images[row, colum].sprite = Resources.Load<Sprite>(newSymbolName);
     }
@@ -777,7 +791,7 @@ public class SlotMachine : MonoBehaviour
             emotionAnimation.AnimateExcitement(images[attackerX, attackerX].rectTransform).OnComplete(() =>
             {
                 symbolsListInHand.Remove(slots[defendX, defendY]);
-                symbolsListPlayerTotal.Remove(slots[defendX, defendY]);
+                RemoveCardFromPlayerIntoal(slots[defendX, defendY]);
                 images[defendX, defendY].sprite = Resources.Load<Sprite>("Empty");
                 //also need to add destroyed value
                 int originalValue = slots[defendX, defendY].baseValue + slots[defendX, defendY].valueDestroy;
@@ -833,9 +847,17 @@ public class SlotMachine : MonoBehaviour
     {
         yield return new WaitForSeconds(seconds);
         gameManager.SetGamePanelActive(currentBadge);
+        spinAvaliable = true;
+        spinBtn.interactable = true;
         ResetSymbolsinHand();
     }
 
+
+    private void RemoveCardFromPlayerIntoal(Symbol cardtobeRemove)
+    {
+        Debug.Log("card's name to be removed: " + cardtobeRemove.itemName);
+        symbolsListPlayerTotal.Remove(cardtobeRemove);
+    }
     //reset value and symbols
     public void ClickNewSymbol(string tag)
     {

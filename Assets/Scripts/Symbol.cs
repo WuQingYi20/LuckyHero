@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class Symbol : MonoBehaviour, IEquatable<Symbol>
@@ -21,6 +20,7 @@ public class Symbol : MonoBehaviour, IEquatable<Symbol>
         cardType= symbol.cardType;
         sequence++;
         ID = sequence;
+        Debug.Log("sequence"+sequence); 
         sprite = symbol.sprite;
         itemName = symbol.itemName;
         description = symbol.description;
