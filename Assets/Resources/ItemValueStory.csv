@@ -3,8 +3,8 @@ Wheat,Gives 2 badges; Has a 20% chance of adding Beer after each spin. Gives 5 b
 Beer,Gives 3 badges. Gives 5 badges when destroyed. Destroys itself after giving badges 12 times.,Agricultural,3,5,,,12,999,0,,0,,,0,,,2,12,1
 Potato,Gives 2 badges. Destroys itself after giving badges 12 times.,Agricultural,2,0,,,12,999,0,,0,,,0,,,3,8,1
 Seedling,Gives 1 badge; Has a 20% chance of transforming into Potato or Wheat.,Agricultural,1,0,,,999,999,0,,20,Potato;Wheat,,0,,,3,7,1
-Honey,Gives 1 badge. Destroys adjacent Wheat. Destroys itself after giving badges 15 times.,Agricultural,1,0,Wheat,,12,999,0,,0,,,0,,,2,10,1
-Mead,Gives 5 badges. Adds Music when destroyed. Gives 5 badges when destroyed.,Agricultural,5,5,,Music,999,999,0,,0,,,0,,,1,17,1
+Honey,Gives 1 badge. Destroys adjacent Wheat. Destroys itself after giving badges 15 times.,Agricultural,1,0,Wheat,,12,999,0,,0,,,0,,,3,10,1
+Mead,Gives 5 badges. Adds Music when destroyed. Gives 5 badges when destroyed.,Agricultural,5,5,,Music,999,999,0,,0,,,0,,,3,17,1
 The mead hall,Gives 1 badge. Destroy adjacent Mead. ,Story1,1,0,Mead,,999,999,0,,0,,,0,,,0,0,999
 Hrothgar,Gives 4 badges. ,Story1,4,0,,,999,999,0,,0,,,0,,,0,0,999
 Hrothgar's wife,Gives 2 badges; Adjacent Hrothgar adds Villager.,Story1,2,0,,,999,999,0,,0,,,0,Hrothgar,Villager,0,0,999

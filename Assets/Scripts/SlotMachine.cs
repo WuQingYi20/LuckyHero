@@ -320,6 +320,7 @@ public class SlotMachine : MonoBehaviour
     {
         images[imageX, imageY].GetComponentInChildren<TextMeshProUGUI>(true).gameObject.SetActive(true);
         images[imageX, imageY].GetComponentInChildren<TextMeshProUGUI>(true).text = slots[imageX, imageY].caculatedValue.ToString();
+        images[imageX, imageY].GetComponentInChildren<TextMeshProUGUI>(true).color = UnityEngine.Color.yellow;
     }
 
     private void HideAllItemBadge()
@@ -342,9 +343,9 @@ public class SlotMachine : MonoBehaviour
                 {
                     images[i, j].GetComponentsInChildren<TextMeshProUGUI>(true)[1].gameObject.SetActive(true);
                     images[i, j].GetComponentsInChildren<TextMeshProUGUI>(true)[1].text = slots[i, j].effectCountsDestroy.ToString();
+                    images[i, j].GetComponentsInChildren<TextMeshProUGUI>(true)[1].color = UnityEngine.Color.red;
                 }
-                Debug.Log("effectCountstodestroy: " + slots[i, j].effectCountsDestroy.ToString());
-                //images[i, j].GetComponentsInChildren<TextMeshProUGUI>(true)[1].color = UnityEngine.Color.red;
+                images[i, j].GetComponentsInChildren<TextMeshProUGUI>(true)[1].color = UnityEngine.Color.red;
             }      
         }
     }
@@ -759,7 +760,6 @@ public class SlotMachine : MonoBehaviour
     private void ExecuteComboAction(int comboCount)
     {
         string symbolName = "Grendel " + comboCount;
-        Debug.Log("添加了巨魔");
         Debug.Log("添加了巨魔：" + symbolName);
         if (comboCount == 1)
         {
@@ -767,19 +767,19 @@ public class SlotMachine : MonoBehaviour
             {
                 return;
             }
-            symbolsListInHand.Add(CSVLoad.symbolsDict[symbolName]);
             AddSymbolstoPlayerCount(symbolName);
             grendelExist = true;
         }
         else
         {
             string preSymbolNmae = "Grendel " + (comboCount - 1);
-            symbolsListInHand.Remove(CSVLoad.symbolsDict[preSymbolNmae]);
-            RemoveCardFromPlayerIntoal(CSVLoad.symbolsDict[preSymbolNmae]);
-            symbolsListInHand.Add(CSVLoad.symbolsDict[symbolName]);
+            symbolsListPlayerTotal.RemoveAll(symbol => symbol.itemName == preSymbolNmae);
             AddSymbolstoPlayerCount(symbolName);
             //下一轮抽卡肯定能是Beowulf，通过call GameManager里面的事件
-            gameManager.OnBeowulfExist();
+            if (comboCount == 3)
+            {
+                gameManager.OnBeowulfExist();
+            }
         }
     }
 
