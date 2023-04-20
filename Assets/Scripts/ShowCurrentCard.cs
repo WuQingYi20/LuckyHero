@@ -52,7 +52,6 @@ public class ShowCurrentCard : MonoBehaviour
     //toggle current cards UI panel
     public void ToggleCurrentCards()
     {
-        Debug.Log("toggle items panel");
         if (ShowCardPanel.activeSelf)
         {
             DeleteCards();

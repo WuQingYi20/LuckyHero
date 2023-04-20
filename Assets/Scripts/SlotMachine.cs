@@ -135,12 +135,12 @@ public class SlotMachine : MonoBehaviour
         //AddSymbolstoPlayerCount("Hrothgar's wife", 3);
         //AddSymbolstoPlayerCount("Seedling", 7);
         //AddSymbolstoPlayerCount("The mead hall", 1);
-        //AddSymbolstoPlayerCount("Beowulf", 3);
-        //AddSymbolstoPlayerCount("Beowulf with the sword", 1);
-        //AddSymbolstoPlayerCount("Grendel 3", 5);
+        //AddSymbolstoPlayerCount("Beowulf", 5);
+        //AddSymbolstoPlayerCount("Beowulf with the sword", 6);
+        //AddSymbolstoPlayerCount("Grendel 1", 1);
         //AddSymbolstoPlayerCount("Grendel 2", 5);
         //AddSymbolstoPlayerCount("Grendel 1", 5);
-        //AddSymbolstoPlayerCount("Wilglaf", 15);
+        //AddSymbolstoPlayerCount("Wilglaf", 6);
         //AddSymbolstoPlayerCount("Old King Beowulf", 3);
         //AddSymbolstoPlayerCount("Villager", 16);
         //AddSymbolstoPlayerCount("Dragon awake", 1);
@@ -425,8 +425,6 @@ public class SlotMachine : MonoBehaviour
                 //Beowulf fight
                 if (slots[i, j].itemName == "Beowulf")
                 {
-                    Debug.Log("its beowulf");
-                    //if neighboor's card's name contains "Grandel", then downgrade it. if it's grandel 3, transform it to grandel 2. if it's grandel 1, destroy it
                     foreach (Point point in pointsNeighbours)
                     {
                         if (slots[point.x, point.y].itemName.Contains("Grendel"))
@@ -438,7 +436,7 @@ public class SlotMachine : MonoBehaviour
                             if (slots[point.x, point.y].itemName == "Grendel 3")
                             {
                                 emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).OnStart(() => {
-                                    soundEffectManager.Play("sword");
+                                    soundEffectManager.Play("monster2");
                                 }).SetAutoKill(false).OnComplete(
                                     () =>
                                     {
@@ -450,7 +448,7 @@ public class SlotMachine : MonoBehaviour
                             else if (slots[point.x, point.y].itemName == "Grendel 2")
                             {
                                 emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).SetAutoKill(false).OnStart(() => {
-                                    soundEffectManager.Play("sword");
+                                    soundEffectManager.Play("monster");
                                 }).OnComplete(
                                     () =>
                                     {
@@ -462,11 +460,12 @@ public class SlotMachine : MonoBehaviour
                             else if (slots[point.x, point.y].itemName == "Grendel 1")
                             {
                                 emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).SetAutoKill(false).OnStart(() => {
-                                    soundEffectManager.Play("sword");
+                                    soundEffectManager.Play("monster");
                                 }).OnComplete(
                                     () =>
                                     {
-                                        Debug.Log("Transform Grendel 1");
+                                        AddSymbolstoPlayerCount("Underwater lair");
+                                        AddSymbolstoPlayerCount("Grendel's arm");
                                         DestroySymbol(tempRow, tempColum, tempX, tempY);
                                     }
                                     ));
@@ -490,6 +489,14 @@ public class SlotMachine : MonoBehaviour
                                 var tempY = point.y;
                                 var tempRow = i;
                                 var tempColum = j;
+                                //win check
+                                if (slots[tempX, tempY].itemName == "Dragon awake")
+                                {
+                                    StartCoroutine(KillDragon(tempX, tempY));
+                                    //onWin应该加到coroutine中去
+
+                                }
+
                                 RemoveCardFromPlayerIntoal(slots[tempX, tempY]);
                                 images[tempX, tempY].sprite = Resources.Load<Sprite>("Empty");
                                 //also need to add destroyed value
@@ -497,16 +504,12 @@ public class SlotMachine : MonoBehaviour
                                 //add sth,maybe also animation
                                 if (slots[tempX, tempY].objectAddWhenDestroyed != "")
                                 {
-                                    soundEffectManager.Play("oh");
+                                    soundEffectManager.Play("add");
                                     AddSymbolstoPlayerCount(slots[tempX, tempY].objectAddWhenDestroyed);
                                 }
                                 
 
-                                //win check
-                                if (slots[tempX, tempY].itemName == "Dragon awake")
-                                {
-                                    gameManager.OnWin();
-                                }
+                                
                             }));
                             emotionAnimation.sequenceCollection.Join(
                                 emotionAnimation.AnimateSadness(images[point.x, point.y].rectTransform)
@@ -623,7 +626,7 @@ public class SlotMachine : MonoBehaviour
                         //sound effect, animation
                         emotionAnimation.sequenceCollection.Append(
                             emotionAnimation.AnimateHappiness(images[i, j].rectTransform).OnStart(() => {
-                                soundEffectManager.Play("oh");
+                                soundEffectManager.Play("add");
                             }).OnComplete(() =>
                         {
                             AddSymbolstoPlayerCount(addItem);
@@ -652,7 +655,7 @@ public class SlotMachine : MonoBehaviour
                                 //sound effect, animation
                                 emotionAnimation.sequenceCollection.Append(
                                 emotionAnimation.AnimateHappiness(images[i, j].rectTransform).OnStart(() => {
-                                    soundEffectManager.Play("oh");
+                                    soundEffectManager.Play("add");
                                 }).OnComplete(() =>
                                 {
                                     AddSymbolstoPlayerCount(addItem);
@@ -733,6 +736,13 @@ public class SlotMachine : MonoBehaviour
         return extraBadge;
     }
 
+    IEnumerator  KillDragon(int tempX, int tempY)
+    {
+        emotionAnimation.FlashImage(images[tempX, tempY]);
+        yield return new WaitForSeconds(2f);
+        gameManager.OnWin();
+    }
+
     private void TransformLevel2toLevel3()
     {
         //add items, destroy items and change background
@@ -801,7 +811,7 @@ public class SlotMachine : MonoBehaviour
                 wilglafExist = true;
             }
         }
-
+        soundEffectManager.Play("sword");
         RemoveCardFromPlayerIntoal(slots[row, colum]);
         Symbol newSymbol = CSVLoad.symbolsDict[newSymbolName];
 
