@@ -165,13 +165,17 @@ public class GameManager : MonoBehaviour
 
     private void UpdateBadgetoUploadaccordingtoCount()
     {
-        if(badgetoUpload < 5)
+        if(badgetoUpload < 6)
         {
-            badgetoUpload = 30 + 10 * uploadCount;
+            badgetoUpload = 36 + 10 * uploadCount;
+        }
+        else if(badgetoUpload < 10)
+        {
+            badgetoUpload = 56 + 6 * uploadCount;
         }
         else
         {
-            badgetoUpload = 54 + 4 * uploadCount;
+            badgetoUpload = 74 + 4 * uploadCount;
         }
     }
 

@@ -2644,7 +2644,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -9, y: -167}
+  m_AnchoredPosition: {x: 155.5, y: -167}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &592538346
@@ -6742,7 +6742,7 @@ MonoBehaviour:
   backgroundMusics:
   - scenario: bgm
     clip: {fileID: 8300000, guid: 5669393aff634ca43bf607a47747fc6a, type: 3}
-    volume: 0.721
+    volume: 0.528
     pitch: 1
     source: {fileID: 0}
   - scenario: end

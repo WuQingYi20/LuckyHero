@@ -125,8 +125,8 @@ public class SlotMachine : MonoBehaviour
         AddSymbolstoPlayerCount("Hrothgar", 1);
         AddSymbolstoPlayerCount("Hrothgar's wife", 1);
         AddSymbolstoPlayerCount("Seedling", 7);
+        AddSymbolstoPlayerCount("Honey", 5);
 
-        //AddSymbolstoPlayerCount("Honey", 6);
         //AddSymbolstoPlayerCount("Wheat", 5);
         //AddSymbolstoPlayerCount("Underwater lair", 1);
         //AddSymbolstoPlayerCount("Seedling", 15);
@@ -136,9 +136,9 @@ public class SlotMachine : MonoBehaviour
         //AddSymbolstoPlayerCount("Seedling", 7);
         //AddSymbolstoPlayerCount("The mead hall", 1);
         //AddSymbolstoPlayerCount("Beowulf", 5);
-        //AddSymbolstoPlayerCount("Beowulf with the sword", 6);
+        //AddSymbolstoPlayerCount("Beowulf with the sword", 2);
         //AddSymbolstoPlayerCount("Grendel 1", 1);
-        //AddSymbolstoPlayerCount("Grendel 2", 5);
+        //AddSymbolstoPlayerCount("Grendel 3", 5);
         //AddSymbolstoPlayerCount("Grendel 1", 5);
         //AddSymbolstoPlayerCount("Wilglaf", 6);
         //AddSymbolstoPlayerCount("Old King Beowulf", 3);
@@ -436,7 +436,7 @@ public class SlotMachine : MonoBehaviour
                             if (slots[point.x, point.y].itemName == "Grendel 3")
                             {
                                 emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).OnStart(() => {
-                                    soundEffectManager.Play("monster2");
+                                    soundEffectManager.Play("monster");
                                 }).SetAutoKill(false).OnComplete(
                                     () =>
                                     {
@@ -460,7 +460,7 @@ public class SlotMachine : MonoBehaviour
                             else if (slots[point.x, point.y].itemName == "Grendel 1")
                             {
                                 emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[tempX, tempY]).SetAutoKill(false).OnStart(() => {
-                                    soundEffectManager.Play("monster");
+                                    soundEffectManager.Play("monster2");
                                 }).OnComplete(
                                     () =>
                                     {
@@ -524,7 +524,15 @@ public class SlotMachine : MonoBehaviour
                     if(slots[i,j].transformItemAdjacent.Length == 0){
                         int roll = Random.Range(1, 101);
                         if(roll < slots[i,j].transformItemChance * slots[i, j].transformItems.Count)
-                        {
+                        { 
+                            if (slots[i, j].markedTransform)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                slots[i, j].markedTransform = true;
+                            }
                             //remove original card and add new transform card: slots, hand and intotal
                             var itemID = roll / slots[i, j].transformItemChance;
                             var newItem = slots[i, j].transformItems[itemID];
@@ -544,6 +552,14 @@ public class SlotMachine : MonoBehaviour
                     else{
                         foreach(Point point in pointsNeighbours){
                             if(slots[i,j].transformItemAdjacent == slots[point.x, point.y].itemName){
+                                if (slots[i, j].markedTransform)
+                                {
+                                    break;
+                                }
+                                else
+                                {
+                                    slots[i, j].markedTransform = true;
+                                }
                                 int roll = Random.Range(1, 101);
                                 if (roll < slots[i, j].transformItemChance * slots[i, j].transformItems.Count)
                                 {
@@ -571,7 +587,7 @@ public class SlotMachine : MonoBehaviour
                 //if beowulf is not appear, mother appear and has effect
                 if (slots[i, j].itemName == "Underwater lair")
                 {
-
+                    Debug.Log("its Underwater lair");
                     var beowulfExistFlag = false;
                     //如果有beowulf就不变身
                     foreach(var point in pointsNeighbours)
@@ -752,25 +768,13 @@ public class SlotMachine : MonoBehaviour
             symbolsListInHand.Add(CSVLoad.symbolsDict[additem]);
         }
 
-        //destroy
-        foreach (var destroyItem in levelTransformData.destroyItems)
-        {
-            foreach (var iteminTotal in symbolsListPlayerTotal)
-            {
-                if(iteminTotal.itemName == destroyItem)
-                {
-                    RemoveCardFromPlayerIntoal(iteminTotal);
-                }
-            }
-        }
-
+        symbolsListPlayerTotal.RemoveAll(item => levelTransformData.destroyItems.Contains(item.itemName));
         backgroundImage.sprite = Resources.Load<Sprite>("BackgroundStage2");
     }
 
     private void ExecuteComboAction(int comboCount)
     {
         string symbolName = "Grendel " + comboCount;
-        Debug.Log("添加了巨魔：" + symbolName);
         if (comboCount == 1)
         {
             if (grendelExist)
@@ -859,6 +863,7 @@ public class SlotMachine : MonoBehaviour
         emotionAnimation.sequenceCollection.Play().OnComplete(() => {
             emotionAnimation.sequenceCollection = DOTween.Sequence();
             emotionAnimation.sequenceCollection.Rewind();
+            emotionAnimation.sequenceCollection.timeScale = 1.4f; ;
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 4; j++)
@@ -897,6 +902,7 @@ public class SlotMachine : MonoBehaviour
     {
         symbolsListPlayerTotal.Remove(cardtobeRemove);
     }
+
     //reset value and symbols
     public void ClickNewSymbol(string tag)
     {
