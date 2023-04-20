@@ -31,9 +31,9 @@ public class CSVLoad : MonoBehaviour
                 objectAddWhenDestroyed = row[6],
 
                 //count-- destroy itself
-                effectCountDestroy = int.Parse(row[7]),
+                effectCountsDestroy = int.Parse(row[7]),
                 //outside square
-                spinToDestroy = int.Parse(row[8]),
+                spinsToDestroy = int.Parse(row[8]),
 
                 //based on chance to generate new things
                 addItemChance = int.Parse(row[9]),

@@ -267,13 +267,12 @@ public class SlotMachine : MonoBehaviour
 
     IEnumerator CaculateMoneywithDelay()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(2.5f);
         CaculateMoney();
     }
 
     public void StartCoroutineSpin(float waitTime)
     {
-        Debug.Log("spinavaliable "+ spinAvaliable); 
         if (spinAvaliable)
         {
             spinAvaliable = false;
@@ -329,6 +328,38 @@ public class SlotMachine : MonoBehaviour
         {
             for(int j = 0; j < 5; j++)
             images[i, j].GetComponentInChildren<TextMeshProUGUI>().gameObject.SetActive(false);
+        }
+    }
+
+    private void ShowSelfDestroySpins()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                
+                if (slots[i, j].effectCountsDestroy < 100)
+                {
+                    images[i, j].GetComponentsInChildren<TextMeshProUGUI>(true)[1].gameObject.SetActive(true);
+                    images[i, j].GetComponentsInChildren<TextMeshProUGUI>(true)[1].text = slots[i, j].effectCountsDestroy.ToString();
+                }
+                Debug.Log("effectCountstodestroy: " + slots[i, j].effectCountsDestroy.ToString());
+                //images[i, j].GetComponentsInChildren<TextMeshProUGUI>(true)[1].color = UnityEngine.Color.red;
+            }      
+        }
+    }
+
+    private void HideSelfDestroySpins()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                if (images[i, j].GetComponentsInChildren<TextMeshProUGUI>(true)[1].gameObject.activeSelf)
+                {
+                    images[i, j].GetComponentsInChildren<TextMeshProUGUI>(true)[1].gameObject.SetActive(false);
+                }
+            }
         }
     }
 
@@ -631,7 +662,7 @@ public class SlotMachine : MonoBehaviour
                 }
 
                 //after x spins,self destroy
-                if (slots[i, j].effectCountDestroy == 1)
+                if (slots[i, j].effectCountsDestroy == 1)
                 {
 
                     var tempRow = i;
@@ -653,8 +684,8 @@ public class SlotMachine : MonoBehaviour
                 }
                 else
                 {
-                    //Debug.Log("current effect count: "+ slots[row, colum].effectCountDestroy);
-                    slots[i, j].effectCountDestroy--;
+                    //Debug.Log("current effect count: "+ slots[row, colum].effectCountsDestroy);
+                    slots[i, j].effectCountsDestroy--;
                 }
 
 
@@ -771,15 +802,12 @@ public class SlotMachine : MonoBehaviour
             }
         }
 
-        Debug.Log("oldItemName: "+ oldSymbolName);
         RemoveCardFromPlayerIntoal(slots[row, colum]);
-        Debug.Log("newItemName: ");
         Symbol newSymbol = CSVLoad.symbolsDict[newSymbolName];
 
         symbolsListInHand.Add(newSymbol);
         AddSymbolstoPlayerCount(newSymbolName);
 
-        Debug.Log("newItemName: "+ newSymbolName);
         slots[row, colum] = CSVLoad.symbolsDict[newSymbolName];
         images[row, colum].sprite = Resources.Load<Sprite>(newSymbolName);
     }
@@ -816,8 +844,8 @@ public class SlotMachine : MonoBehaviour
                 earnedBadge += slots[i, j].caculatedValue;
             }
         }
-        
-        Debug.Log("Update UI");
+        ShowSelfDestroySpins();
+
         emotionAnimation.sequenceCollection.Play().OnComplete(() => {
             emotionAnimation.sequenceCollection = DOTween.Sequence();
             emotionAnimation.sequenceCollection.Rewind();
@@ -829,6 +857,8 @@ public class SlotMachine : MonoBehaviour
                 }
             }
             soundEffectManager.Play("coin");
+            HideAllItemBadge();
+            HideSelfDestroySpins();
             UpdateBadge(earnedBadge);
             StartCoroutine(SetPanelActivewithDelay(1f));
         });
@@ -855,7 +885,6 @@ public class SlotMachine : MonoBehaviour
 
     private void RemoveCardFromPlayerIntoal(Symbol cardtobeRemove)
     {
-        Debug.Log("card's name to be removed: " + cardtobeRemove.itemName);
         symbolsListPlayerTotal.Remove(cardtobeRemove);
     }
     //reset value and symbols

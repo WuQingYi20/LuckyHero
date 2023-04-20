@@ -6,7 +6,7 @@ public class Symbol : MonoBehaviour, IEquatable<Symbol>
 {
     public Sprite sprite;
     public string itemName, description, cardType, objectAddWhenDestroyed, objectAddEveryXTurnsORSpins, objectTurnInto, addItembyChance, transformItemAdjacent, addItemAdjacentCondition, addItembyAdjacent;
-    public int baseValue, valueDestroy, caculatedValue, ADOBuffValue, spinToDestroy, effectCountDestroy, turnsToAddSTH, spinsToAddSTH, turnsToTurnInto, percentage, addItemChance, transformItemChance, destroyAgricultureChance, price, stage;
+    public int baseValue, valueDestroy, caculatedValue, ADOBuffValue, spinsToDestroy, effectCountsDestroy, turnsToAddSTH, spinsToAddSTH, turnsToTurnInto, percentage, addItemChance, transformItemChance, destroyAgricultureChance, price, stage;
     public bool markedDestruction = false;
     public Guid ID;
     public int[] points = new int[2] { -1, -1 };
@@ -29,8 +29,8 @@ public class Symbol : MonoBehaviour, IEquatable<Symbol>
         valueDestroy = symbol.valueDestroy;
         markedDestruction = symbol.markedDestruction;
         caculatedValue = symbol.caculatedValue;
-        spinToDestroy = symbol.spinToDestroy;
-        effectCountDestroy = symbol.effectCountDestroy;
+        spinsToDestroy = symbol.spinsToDestroy;
+        effectCountsDestroy = symbol.effectCountsDestroy;
         ADOBuffValue = symbol.ADOBuffValue;
         objectAddWhenDestroyed = symbol.objectAddWhenDestroyed;
         objectAddEveryXTurnsORSpins = symbol.objectAddEveryXTurnsORSpins;

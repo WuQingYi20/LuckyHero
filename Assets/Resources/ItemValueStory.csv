@@ -1,6 +1,6 @@
 ItemName,description,Card type,baseValue,ValueDestroy,Destroys adjacent (item),Adds x when destroyed,Destroy itself after giving badges x times,Destroy itself after x spin,Have x% chance adding y item after each spin,y item,Has x% tranform into y,Transform into y,When adjacent z,x% chance destroy adjacent Agricultural,Adjacent X ,Adds Y,Percentage,price,stage
 Wheat,Gives 2 badges; Has a 20% chance of adding Beer after each spin. Gives 5 badges and adds Mead when destroyed.,Agricultural,2,5,,Mead,999,999,20,Beer,0,,,0,,,1,15,1
-Beer,Gives 3 badges. Gives 5 badges when destroyed.,Agricultural,3,5,,,999,999,0,,0,,,0,,,2,12,1
+Beer,Gives 3 badges. Gives 5 badges when destroyed. Destroys itself after giving badges 12 times.,Agricultural,3,5,,,12,999,0,,0,,,0,,,2,12,1
 Potato,Gives 2 badges. Destroys itself after giving badges 12 times.,Agricultural,2,0,,,12,999,0,,0,,,0,,,3,8,1
 Seedling,Gives 1 badge; Has a 20% chance of transforming into Potato or Wheat.,Agricultural,1,0,,,999,999,0,,20,Potato;Wheat,,0,,,3,7,1
 Honey,Gives 1 badge. Destroys adjacent Wheat. Destroys itself after giving badges 15 times.,Agricultural,1,0,Wheat,,12,999,0,,0,,,0,,,2,10,1

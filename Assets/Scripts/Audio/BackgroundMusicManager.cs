@@ -33,7 +33,6 @@ public class BackgroundMusicManager : MonoBehaviour
 
         foreach (BackgroundMusic bgm in backgroundMusics)
         {
-            Debug.Log("volume: "+ bgm.volume);
             bgm.source = gameObject.AddComponent<AudioSource>();
             bgm.source.clip = bgm.clip;
             bgm.source.volume = bgm.volume;
