@@ -294,27 +294,29 @@ public class SlotMachine : MonoBehaviour
         }
     }
 
+
     private List<Point> GetNeighborPoints(int row, int colum)
     {
         List<Point> points = new List<Point>();
-        if(row + 1 < 4)
+
+        // The list of possible moves in 8 directions
+        int[] dr = { -1, -1, -1, 0, 0, 1, 1, 1 };
+        int[] dc = { -1, 0, 1, -1, 1, -1, 0, 1 };
+
+        for (int i = 0; i < 8; i++)
         {
-            points.Add(new Point(row+1, colum));
+            int newRow = row + dr[i];
+            int newColum = colum + dc[i];
+
+            if (newRow >= 0 && newRow < 4 && newColum >= 0 && newColum < 5)
+            {
+                points.Add(new Point(newRow, newColum));
+            }
         }
-        if (row - 1 >= 0)
-        {
-            points.Add(new Point(row - 1, colum));
-        }
-        if (colum + 1 < 5)
-        {
-            points.Add(new Point(row, colum + 1));
-        }
-        if (colum - 1 >= 0)
-        {
-            points.Add(new Point(row, colum - 1));
-        }
+
         return points;
     }
+
 
     private void ShowItemBadge(int imageX, int imageY)
     {
@@ -770,6 +772,7 @@ public class SlotMachine : MonoBehaviour
 
         symbolsListPlayerTotal.RemoveAll(item => levelTransformData.destroyItems.Contains(item.itemName));
         backgroundImage.sprite = Resources.Load<Sprite>("BackgroundStage2");
+        gameManager.currentStage = 3;
     }
 
     private void ExecuteComboAction(int comboCount)
@@ -863,7 +866,7 @@ public class SlotMachine : MonoBehaviour
         emotionAnimation.sequenceCollection.Play().OnComplete(() => {
             emotionAnimation.sequenceCollection = DOTween.Sequence();
             emotionAnimation.sequenceCollection.Rewind();
-            emotionAnimation.sequenceCollection.timeScale = 1.4f; ;
+            emotionAnimation.sequenceCollection.timeScale = 1.35f; ;
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 4; j++)

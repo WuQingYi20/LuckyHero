@@ -6,7 +6,8 @@ public class TooltipManager : MonoBehaviour
 {
     public static TooltipManager Instance;
 
-    public TextMeshProUGUI tooltipText;
+    public TextMeshProUGUI tooltipContent;
+    public TextMeshProUGUI tooltipTitle;
     public RectTransform tooltipRectTransform;
     public Canvas canvas;
     public Vector2 offset;
@@ -25,11 +26,12 @@ public class TooltipManager : MonoBehaviour
         }
     }
 
-    public void ShowTooltip(string description, RectTransform cardRect)
+    public void ShowTooltip(string description, string title, RectTransform cardRect)
     {
         cardRectTransform = cardRect;
-        tooltipText.gameObject.SetActive(true);
-        tooltipText.text = description;
+        tooltipRectTransform.gameObject.SetActive(true);
+        tooltipContent.text = description;
+        tooltipTitle.text = title;
         //Vector2 cardAnchoredPosition = cardRectTransform.anchoredPosition;
         //Vector2 targetAnchoredPosition = cardAnchoredPosition + offset;
         //tooltipRectTransform.anchoredPosition = targetAnchoredPosition;
@@ -38,16 +40,8 @@ public class TooltipManager : MonoBehaviour
 
     public void HideTooltip()
     {
-        tooltipText.gameObject.SetActive(false);
+        tooltipRectTransform.gameObject.SetActive(false);
     }
-
-    //private void Update()
-    //{
-    //    if (gameObject.activeSelf)
-    //    {
-    //        UpdateTooltipPosition();
-    //    }
-    //}
 
     private void UpdateTooltipPosition()
     {

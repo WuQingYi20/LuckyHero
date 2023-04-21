@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     private int uploadCount = 0;
     private int currentCountstoUploadMoney;
     //再杀死巨魔妈妈之后会转变
-    private int currentStage = 1;
+    public int currentStage = 1;
     public event Action WinEvent;
     public event Action BeowulfExistEvent;
     private int beowulfExistFlag = 0;
@@ -121,11 +121,14 @@ public class GameManager : MonoBehaviour
     {
         //according to current stage
         int sumPossibility = 0;
-        foreach(var symbol in CSVLoad.symbols)
+        Debug.Log($"currentStage: {currentStage}");
+        foreach (var symbol in CSVLoad.symbols)
         {
+            //Debug.Log($"symbolStage: {symbol.stage}");
             if (currentStage >= symbol.stage)
             {
                 sumPossibility += symbol.percentage;
+                Debug.Log($"symbolPercentage: {symbol.percentage}");
             } 
         }
         return sumPossibility;
@@ -136,6 +139,7 @@ public class GameManager : MonoBehaviour
         int randValue = Random.Range(0, sumPossibility);
         foreach(var symbol in CSVLoad.symbols)
         {
+            //Debug.Log($"sumPossiblity: {sumPossibility}");
             if (currentStage >= symbol.stage)
             {
                 randValue -= symbol.percentage;
