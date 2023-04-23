@@ -60,7 +60,9 @@ public class CSVLoad : MonoBehaviour
                 stage = int.Parse(row[19]),
                 destroyadjacentChance = int.Parse(row[20]),
                 //update after generating
-                points = new int[2] { -1, -1 }
+                points = new int[2] { -1, -1 },
+                markedDestruction = false,
+                markedTransform = false,
             };
 
             symbols.Add(symbolTemp);

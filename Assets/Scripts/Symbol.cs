@@ -16,6 +16,7 @@ public class Symbol : MonoBehaviour, IEquatable<Symbol>
     public Symbol() {
         ID = Guid.NewGuid();
         markedTransform = false;
+        markedDestruction= false;
     }
 
     public Symbol(Symbol symbol)

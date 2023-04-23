@@ -121,7 +121,6 @@ public class GameManager : MonoBehaviour
     {
         //according to current stage
         int sumPossibility = 0;
-        Debug.Log($"currentStage: {currentStage}");
         foreach (var symbol in CSVLoad.symbols)
         {
             //Debug.Log($"symbolStage: {symbol.stage}");

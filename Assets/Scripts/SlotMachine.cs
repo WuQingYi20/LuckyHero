@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using static Unity.Burst.Intrinsics.X86.Avx;
 using Sequence = DG.Tweening.Sequence;
 using Random = UnityEngine.Random;
+using System.Threading;
 
 class P
 {
@@ -72,7 +73,6 @@ public class SlotMachine : MonoBehaviour
         }
 
         int randomNumber = UnityEngine.Random.Range(0, 100);
-        Debug.Log("Percentage: "+ percentage);
         return randomNumber < percentage;
     };
 
@@ -141,7 +141,7 @@ public class SlotMachine : MonoBehaviour
         AddSymbolstoPlayerCount("Seedling", 8);
         AddSymbolstoPlayerCount("Honey", 5);
 
-        //AddSymbolstoPlayerCount("Seedling", 15);
+        /*AddSymbolstoPlayerCount("Seedling", 15)*/;
         //AddSymbolstoPlayerCount("Mead", 5);
         //AddSymbolstoPlayerCount("Underwater lair", 1);
         //AddSymbolstoPlayerCount("Seedling", 15);
@@ -156,7 +156,8 @@ public class SlotMachine : MonoBehaviour
         //AddSymbolstoPlayerCount("Grendel 3", 5);
         //AddSymbolstoPlayerCount("Grendel 1", 5);
         //AddSymbolstoPlayerCount("Wilglaf", 6);
-        //AddSymbolstoPlayerCount("Old King Beowulf", 3);
+        //AddSymbolstoPlayerCount("Warrior", 19);
+        //AddSymbolstoPlayerCount("Old King Beowulf", 1);
         //AddSymbolstoPlayerCount("Villager", 5);
         //AddSymbolstoPlayerCount("Dragon awake", 1);
         //AddSymbolstoPlayerCount("Dragon sleeping", 1);
@@ -180,7 +181,9 @@ public class SlotMachine : MonoBehaviour
 
     private void AddSymboltoPlayer(string symbolName)
     {
-        symbolsListPlayerTotal.Add(CSVLoad.symbolsDict[symbolName]);
+        var newSymbol = CSVLoad.symbolsDict[symbolName];
+        symbolsListPlayerTotal.Add(newSymbol);
+        Debug.Log($"symbolname: {newSymbol.itemName} {newSymbol.markedTransform}");
     }
 
     private int GetRandSymbolIndexfromHand()
@@ -545,63 +548,56 @@ public class SlotMachine : MonoBehaviour
                 if(slots[i,j].transformItemChance != 0){
                     if (slots[i, j].transformItemAdjacent.Length == 0) {
                         int roll = Random.Range(1, 101);
-                        Debug.Log($"itemName: {slots[i, j].itemName} ");
                         if (roll < slots[i, j].transformItemChance * slots[i, j].transformItems.Count)
                         {
-                            Debug.Log($"try to transform: {roll}  {slots[i, j].transformItemChance * slots[i, j].transformItems.Count}");
-                            if (slots[i, j].markedTransform)
+                            Debug.Log($"try to transform: {roll}  {slots[i, j].transformItemChance * slots[i, j].transformItems.Count}  {slots[i, j].markedTransform}");
+                            if (!slots[i, j].markedTransform)
                             {
-                                break;
-                            }
-                            else
-                            {
+                                //remove original card and add new transform card: slots, hand and intotal
+                                var itemID = roll / slots[i, j].transformItemChance;
+                                var newItem = slots[i, j].transformItems[itemID];
+                                var oldItem = slots[i, j].itemName;
+                                int tempRow = i;
+                                int tempColum = j;
                                 slots[i, j].markedTransform = true;
+                                emotionAnimation.sequenceCollection.Append(
+                                                                   emotionAnimation.AnimateSurprise(images[i, j].rectTransform).OnStart(() => {
+                                                                       Debug.Log("start tween");
+                                                                       soundEffectManager.Play("surpise");
+                                                                   }).OnComplete(() =>
+                                                                   {
+                                                                       Debug.Log("After completetion");
+                                                                       TransformSymbol(tempRow, tempColum, oldItem, newItem);
+                                                                   }));
+                                //effect
                             }
-                            //remove original card and add new transform card: slots, hand and intotal
-                            var itemID = roll / slots[i, j].transformItemChance;
-                            var newItem = slots[i, j].transformItems[itemID];
-                            var oldItem = slots[i, j].itemName;
-                            int tempRow = i;
-                            int tempColum = j;
-                            emotionAnimation.sequenceCollection.Append(
-                                                               emotionAnimation.AnimateSurprise(images[i, j].rectTransform).OnStart(() =>{
-                                                                   soundEffectManager.Play("surpise");
-                            }).OnComplete(() =>
-                                                               {
-                                                                   TransformSymbol(tempRow, tempColum, oldItem, newItem); 
-                                                               }));
-                            //effect
                         }
                     }
                     else{
                         foreach(Point point in pointsNeighbours){
                             if(slots[i,j].transformItemAdjacent == slots[point.x, point.y].itemName){
-                                if (slots[i, j].markedTransform)
-                                {
-                                    break;
-                                }
-                                else
+                                if (!slots[i, j].markedTransform)
                                 {
                                     slots[i, j].markedTransform = true;
-                                }
-                                int roll = Random.Range(1, 101);
-                                if (roll < slots[i, j].transformItemChance * slots[i, j].transformItems.Count)
-                                {
-                                    //remove original card and add new transform card: slots, hand and intotal
-                                    var itemID = roll / slots[i, j].transformItemChance;
-                                    var newItem = slots[i, j].transformItems[itemID];
-                                    var oldItem = slots[i, j].itemName;
-                                    int tempRow = i;
-                                    int tempColum = j;
-                                    emotionAnimation.sequenceCollection.Append(
-                                                                       emotionAnimation.AnimateSurprise(images[i, j].rectTransform).OnStart(() => {
-                                                                           soundEffectManager.Play("surpise");
-                                                                       }).OnComplete(() =>
-                                                                       {
-                                                                           TransformSymbol(tempRow, tempColum, oldItem, newItem);
+                                    int roll = Random.Range(1, 101);
+                                    if (roll < slots[i, j].transformItemChance * slots[i, j].transformItems.Count)
+                                    {
+                                        //remove original card and add new transform card: slots, hand and intotal
+                                        var itemID = roll / slots[i, j].transformItemChance;
+                                        var newItem = slots[i, j].transformItems[itemID];
+                                        var oldItem = slots[i, j].itemName;
+                                        int tempRow = i;
+                                        int tempColum = j;
+                                        emotionAnimation.sequenceCollection.Append(
+                                                                           emotionAnimation.AnimateSurprise(images[i, j].rectTransform).OnStart(() => {
+                                                                               soundEffectManager.Play("surpise");
+                                                                           }).OnComplete(() =>
+                                                                           {
+                                                                               TransformSymbol(tempRow, tempColum, oldItem, newItem);
 
-                                                                       }));
-                                    //effect
+                                                                           }));
+                                        //effect
+                                    }
                                 }
                             }
                         }
@@ -828,7 +824,8 @@ public class SlotMachine : MonoBehaviour
     }
 
     private void TransformSymbol(int row, int colum, string oldSymbolName, string newSymbolName)
-    {   
+    {
+        Debug.Log($"enter transform: {oldSymbolName}");
         if (newSymbolName == "Wilglaf")
         {
             if (wilglafExist)
@@ -838,9 +835,9 @@ public class SlotMachine : MonoBehaviour
             else
             {
                 wilglafExist = true;
+                soundEffectManager.Play("sword");
             }
         }
-        soundEffectManager.Play("sword");
         RemoveCardFromPlayerIntoal(slots[row, colum]);
         Symbol newSymbol = CSVLoad.symbolsDict[newSymbolName];
 
@@ -849,6 +846,7 @@ public class SlotMachine : MonoBehaviour
 
         slots[row, colum] = CSVLoad.symbolsDict[newSymbolName];
         images[row, colum].sprite = Resources.Load<Sprite>(newSymbolName);
+        Debug.Log($"finish transform: {newSymbolName}");
     }
 
     private void DestroySymbol(int attackerX, int attackerY, int defendX, int defendY)
@@ -884,7 +882,6 @@ public class SlotMachine : MonoBehaviour
             }
         }
         ShowSelfDestroySpins();
-
         emotionAnimation.sequenceCollection.Play().OnComplete(() => {
             emotionAnimation.sequenceCollection = DOTween.Sequence();
             emotionAnimation.sequenceCollection.Rewind();
@@ -900,6 +897,7 @@ public class SlotMachine : MonoBehaviour
             HideAllItemBadge();
             HideSelfDestroySpins();
             UpdateBadge(earnedBadge);
+            UpdateMarked();
             StartCoroutine(SetPanelActivewithDelay(1f));
         });
     }
@@ -935,7 +933,6 @@ public class SlotMachine : MonoBehaviour
         var textName = btn.GetComponentInChildren<TextMeshProUGUI>();
         AddSymboltoPlayer(textName.text);
         //update badge
-        Debug.Log(textName.text+" price: " + CSVLoad.symbolsDict[textName.text].price);
         UpdateBadge(-CSVLoad.symbolsDict[textName.text].price);
         //HideAllItemBadge();
         AddSymbolPanel.SetActive(false);
@@ -953,8 +950,13 @@ public class SlotMachine : MonoBehaviour
         badgeShowText.text = currentBadge.ToString();
     }
 
-    private void Update()
+    //solve markedTransform issue, but not solve add issues
+    private void UpdateMarked()
     {
-        //Debug.Log("player badge:"+ currentBadge);
+        foreach(var symbol in symbolsListPlayerTotal)
+        {
+            symbol.markedDestruction = false;
+            symbol.markedTransform = false;
+        }
     }
 }
