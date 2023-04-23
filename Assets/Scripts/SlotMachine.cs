@@ -141,6 +141,7 @@ public class SlotMachine : MonoBehaviour
         AddSymbolstoPlayerCount("Seedling", 8);
         AddSymbolstoPlayerCount("Honey", 5);
 
+        //AddSymbolstoPlayerCount("Seedling", 15);
         //AddSymbolstoPlayerCount("Mead", 5);
         //AddSymbolstoPlayerCount("Underwater lair", 1);
         //AddSymbolstoPlayerCount("Seedling", 15);
@@ -384,6 +385,7 @@ public class SlotMachine : MonoBehaviour
     {
         int extraBadge = 0;
         // Check if there are 3 music symbols in a row or column
+        //改成两个巨魔地版本
         if (musicCombooCount <= 3)
         {
             for (int i = 0; i < 4; i++)
@@ -495,7 +497,6 @@ public class SlotMachine : MonoBehaviour
                         if (ADODestroyObject == slots[point.x, point.y].itemName){
 
                             if (!isSuccess(slots[i, j].destroyadjacentChance)) break;
-                            Debug.Log("success");
                             if (slots[i, j].itemName == "Villager")
                             {
                                 slots[i, j].effectCountsDestroy += 3;
@@ -547,7 +548,7 @@ public class SlotMachine : MonoBehaviour
                         Debug.Log($"itemName: {slots[i, j].itemName} ");
                         if (roll < slots[i, j].transformItemChance * slots[i, j].transformItems.Count)
                         {
-                            Debug.Log("try to reansform");
+                            Debug.Log($"try to transform: {roll}  {slots[i, j].transformItemChance * slots[i, j].transformItems.Count}");
                             if (slots[i, j].markedTransform)
                             {
                                 break;
