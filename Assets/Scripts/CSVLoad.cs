@@ -6,8 +6,11 @@ public class CSVLoad : MonoBehaviour
     public static List<Symbol> symbols = new();
     public static Dictionary<string, Symbol> symbolsDict = new();
 
-    private void Start() => ReadCSV("ItemValueStory");
-
+    private void Awake()
+    {
+        ReadCSV("ItemValueStory");
+        Debug.Log("CSV has read");
+    }
     public static void ReadCSV(string CSVPath)
     {
         TextAsset temp = Resources.Load<TextAsset>(CSVPath);
@@ -55,6 +58,7 @@ public class CSVLoad : MonoBehaviour
                 percentage = int.Parse(row[17]),
                 price = int.Parse(row[18]),
                 stage = int.Parse(row[19]),
+                destroyadjacentChance = int.Parse(row[20]),
                 //update after generating
                 points = new int[2] { -1, -1 }
             };

@@ -6,7 +6,7 @@ public class Symbol : MonoBehaviour, IEquatable<Symbol>
 {
     public Sprite sprite;
     public string itemName, description, cardType, objectAddWhenDestroyed, objectAddEveryXTurnsORSpins, objectTurnInto, addItembyChance, transformItemAdjacent, addItemAdjacentCondition, addItembyAdjacent;
-    public int baseValue, valueDestroy, caculatedValue, ADOBuffValue, spinsToDestroy, effectCountsDestroy, turnsToAddSTH, spinsToAddSTH, turnsToTurnInto, percentage, addItemChance, transformItemChance, destroyAgricultureChance, price, stage;
+    public int baseValue, valueDestroy, caculatedValue, ADOBuffValue, spinsToDestroy, effectCountsDestroy, turnsToAddSTH, spinsToAddSTH, turnsToTurnInto, percentage, addItemChance, transformItemChance, destroyAgricultureChance, price, stage, destroyadjacentChance;
     public bool markedDestruction = false, markedTransform = false;
     public Guid ID;
     public int[] points = new int[2] { -1, -1 };
@@ -20,6 +20,7 @@ public class Symbol : MonoBehaviour, IEquatable<Symbol>
 
     public Symbol(Symbol symbol)
     {
+        destroyadjacentChance = symbol.destroyadjacentChance;
         markedTransform = symbol.markedTransform;
         cardType = symbol.cardType;
         ID = Guid.NewGuid();

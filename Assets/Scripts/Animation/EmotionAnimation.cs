@@ -41,7 +41,7 @@ public class EmotionAnimation : MonoBehaviour
 
     private void Start()
     {
-        sequenceCollection.timeScale= 1.35f;
+        sequenceCollection.timeScale= 1.38f;
     }
 
     public void StartAnimation()

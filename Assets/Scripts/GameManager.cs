@@ -128,7 +128,6 @@ public class GameManager : MonoBehaviour
             if (currentStage >= symbol.stage)
             {
                 sumPossibility += symbol.percentage;
-                Debug.Log($"symbolPercentage: {symbol.percentage}");
             } 
         }
         return sumPossibility;

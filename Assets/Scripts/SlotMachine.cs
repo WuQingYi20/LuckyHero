@@ -1,5 +1,6 @@
 using DG.Tweening;
 using DG.Tweening.Core.Enums;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static Unity.Burst.Intrinsics.X86.Avx;
 using Sequence = DG.Tweening.Sequence;
+using Random = UnityEngine.Random;
 
 class P
 {
@@ -61,6 +63,18 @@ public class SlotMachine : MonoBehaviour
         list[indexA] = list[indexB];
         list[indexB] = tmp;
     }
+
+    Predicate<int> isSuccess = percentage =>
+    {
+        if (percentage < 0 || percentage > 100)
+        {
+            throw new ArgumentOutOfRangeException("Percentage should be between 0 and 100.");
+        }
+
+        int randomNumber = UnityEngine.Random.Range(0, 100);
+        Debug.Log("Percentage: "+ percentage);
+        return randomNumber < percentage;
+    };
 
     private static SlotMachine instance;
 
@@ -124,16 +138,16 @@ public class SlotMachine : MonoBehaviour
         AddSymbolstoPlayerCount("The mead hall", 1);
         AddSymbolstoPlayerCount("Hrothgar", 1);
         AddSymbolstoPlayerCount("Hrothgar's wife", 1);
-        AddSymbolstoPlayerCount("Seedling", 7);
+        AddSymbolstoPlayerCount("Seedling", 8);
         AddSymbolstoPlayerCount("Honey", 5);
 
-        //AddSymbolstoPlayerCount("Wheat", 5);
+        //AddSymbolstoPlayerCount("Mead", 5);
         //AddSymbolstoPlayerCount("Underwater lair", 1);
         //AddSymbolstoPlayerCount("Seedling", 15);
         //AddSymbolstoPlayerCount("Music", 8);
         //AddSymbolstoPlayerCount("Hrothgar", 3);
         //AddSymbolstoPlayerCount("Hrothgar's wife", 3);
-        //AddSymbolstoPlayerCount("Seedling", 7);
+        //AddSymbolstoPlayerCount("Seedling", 10);
         //AddSymbolstoPlayerCount("The mead hall", 1);
         //AddSymbolstoPlayerCount("Beowulf", 5);
         //AddSymbolstoPlayerCount("Beowulf with the sword", 2);
@@ -142,7 +156,7 @@ public class SlotMachine : MonoBehaviour
         //AddSymbolstoPlayerCount("Grendel 1", 5);
         //AddSymbolstoPlayerCount("Wilglaf", 6);
         //AddSymbolstoPlayerCount("Old King Beowulf", 3);
-        //AddSymbolstoPlayerCount("Villager", 16);
+        //AddSymbolstoPlayerCount("Villager", 5);
         //AddSymbolstoPlayerCount("Dragon awake", 1);
         //AddSymbolstoPlayerCount("Dragon sleeping", 1);
     }
@@ -454,7 +468,6 @@ public class SlotMachine : MonoBehaviour
                                 }).OnComplete(
                                     () =>
                                     {
-                                        Debug.Log("Transform Grendel 2");
                                         TransformSymbol(tempX, tempY, "Grendel 2", "Grendel 1");
                                     }
                                     ));
@@ -480,8 +493,15 @@ public class SlotMachine : MonoBehaviour
                 foreach (var ADODestroyObject in slots[i,j].ADODestroyObjects){
                     foreach(Point point in pointsNeighbours){
                         if (ADODestroyObject == slots[point.x, point.y].itemName){
+
+                            if (!isSuccess(slots[i, j].destroyadjacentChance)) break;
+                            Debug.Log("success");
+                            if (slots[i, j].itemName == "Villager")
+                            {
+                                slots[i, j].effectCountsDestroy += 3;
+                            }
+
                             slots[point.x, point.y].markedDestruction = true;
-                            
                             emotionAnimation.sequenceCollection.Append(
                                 emotionAnimation.AnimateExcitement(images[i, j].rectTransform).OnStart(() => {
                                     soundEffectManager.Play("dying");
@@ -496,7 +516,6 @@ public class SlotMachine : MonoBehaviour
                                 {
                                     StartCoroutine(KillDragon(tempX, tempY));
                                     //onWin应该加到coroutine中去
-
                                 }
 
                                 RemoveCardFromPlayerIntoal(slots[tempX, tempY]);
@@ -523,10 +542,12 @@ public class SlotMachine : MonoBehaviour
 
                 //transform item
                 if(slots[i,j].transformItemChance != 0){
-                    if(slots[i,j].transformItemAdjacent.Length == 0){
+                    if (slots[i, j].transformItemAdjacent.Length == 0) {
                         int roll = Random.Range(1, 101);
-                        if(roll < slots[i,j].transformItemChance * slots[i, j].transformItems.Count)
-                        { 
+                        Debug.Log($"itemName: {slots[i, j].itemName} ");
+                        if (roll < slots[i, j].transformItemChance * slots[i, j].transformItems.Count)
+                        {
+                            Debug.Log("try to reansform");
                             if (slots[i, j].markedTransform)
                             {
                                 break;
@@ -866,7 +887,7 @@ public class SlotMachine : MonoBehaviour
         emotionAnimation.sequenceCollection.Play().OnComplete(() => {
             emotionAnimation.sequenceCollection = DOTween.Sequence();
             emotionAnimation.sequenceCollection.Rewind();
-            emotionAnimation.sequenceCollection.timeScale = 1.35f; ;
+            emotionAnimation.sequenceCollection.timeScale = 1.38f; ;
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 4; j++)
