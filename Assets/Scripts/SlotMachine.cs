@@ -13,6 +13,8 @@ using static Unity.Burst.Intrinsics.X86.Avx;
 using Sequence = DG.Tweening.Sequence;
 using Random = UnityEngine.Random;
 using System.Threading;
+using Unity.VisualScripting;
+using System.Linq;
 
 class P
 {
@@ -141,7 +143,8 @@ public class SlotMachine : MonoBehaviour
         AddSymbolstoPlayerCount("Seedling", 8);
         AddSymbolstoPlayerCount("Honey", 5);
 
-        /*AddSymbolstoPlayerCount("Seedling", 15)*/;
+        /*AddSymbolstoPlayerCount("Seedling", 15)*/
+        ;
         //AddSymbolstoPlayerCount("Mead", 5);
         //AddSymbolstoPlayerCount("Underwater lair", 1);
         //AddSymbolstoPlayerCount("Seedling", 15);
@@ -157,9 +160,9 @@ public class SlotMachine : MonoBehaviour
         //AddSymbolstoPlayerCount("Grendel 1", 5);
         //AddSymbolstoPlayerCount("Wilglaf", 6);
         //AddSymbolstoPlayerCount("Warrior", 19);
-        //AddSymbolstoPlayerCount("Old King Beowulf", 1);
+        //AddSymbolstoPlayerCount("Old King Beowulf", 5);
         //AddSymbolstoPlayerCount("Villager", 5);
-        //AddSymbolstoPlayerCount("Dragon awake", 1);
+        //AddSymbolstoPlayerCount("Dragon awake", 5);
         //AddSymbolstoPlayerCount("Dragon sleeping", 1);
     }
 
@@ -441,8 +444,31 @@ public class SlotMachine : MonoBehaviour
         for (int i = 0; i< 4; i++)
         {
             for(int j = 0; j < 5; j++)
-            {  
+            {
                 List<Point> pointsNeighbours = GetNeighborPoints(i, j);
+                //dragon awake
+
+                if (slots[i, j].itemName == "Dragon awake")
+                {
+                    pointsNeighbours
+                        .Where(point => slots[point.x, point.y].itemName == "Old King Beowulf")
+                        .ToList()
+                        .ForEach(point =>
+                        {
+                            emotionAnimation.sequenceCollection.Append(emotionAnimation.FlashImage(images[point.x, point.y]).OnStart(() =>
+                            {
+                                soundEffectManager.Play("dying");
+                            }).SetAutoKill(false).OnComplete(
+                                () =>
+                                {
+                                    slots[point.x, point.y].baseValue = 0;
+                                }
+                            ));
+                        });
+                }
+
+
+
                 //Beowulf fight
                 if (slots[i, j].itemName == "Beowulf")
                 {
